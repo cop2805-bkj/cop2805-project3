@@ -37,7 +37,7 @@ public class MainWindow implements Runnable {
 
     public MainWindow() {
         frame = new JFrame("SearchUI");
-        mainPane = new JPanel(new FlowLayout());
+        mainPane = new JPanel(new BorderLayout());
         searchPane = new JPanel(new FlowLayout());
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setPreferredSize(new Dimension(500,500));
@@ -66,7 +66,7 @@ public class MainWindow implements Runnable {
         searchPane.setPreferredSize(new Dimension(450,50));
         resultsPane.setPreferredSize(new Dimension(400,400));
 
-        mainPane.add(searchPane);
+        mainPane.add(searchPane, BorderLayout.PAGE_START);
         mainPane.add(resultsPane);
 
         mainPane.setOpaque(true); //content panes must be opaque
