@@ -19,7 +19,7 @@ public class MainWindowFrame implements Runnable {
     public void run() {
         mainFrame.setContentPane(windowContents.$$$getRootComponent$$$());
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(500,500));
+        mainFrame.setPreferredSize(new Dimension(600,600));
         mainFrame.pack();
         mainFrame.setVisible(true);
     }

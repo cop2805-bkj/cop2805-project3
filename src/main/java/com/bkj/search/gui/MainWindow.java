@@ -17,22 +17,18 @@ public class MainWindow {
     private JTable resultsTable;
     private JProgressBar progressBar1;
     private JButton chooseFilesButton;
-    private JList searchFilesList;
+    private JList<String> searchFilesList;
     private JButton removeSelectedFileButton;
 
-    private DefaultListModel listModel;
+    private DefaultListModel<String> listModel;
     private JFileChooser searchFilesChooser;
     private int fcRetval;
 
-    {
-        listModel = new DefaultListModel();
-        searchFilesList = new JList(listModel);
-    }
-
     public MainWindow() {
+        $$$setupUI$$$();
+
         searchFilesChooser = new JFileChooser();
 
-        $$$setupUI$$$();
         doSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -50,7 +46,7 @@ public class MainWindow {
                     File file = searchFilesChooser.getSelectedFile();
                     //This is where a real application would open the file.
                     listModel.addElement(file.toPath().toString());
-                    searchFilesList.setModel(listModel);
+                    //searchFilesList.setModel(listModel);
                 } else {
                     // Canceled
                 }
@@ -64,7 +60,7 @@ public class MainWindow {
                 try {
                     listModel.remove(searchFilesList.getSelectedIndex());
                 } catch (ArrayIndexOutOfBoundsException aie) {
-                    NotImplementedDialog d = new NotImplementedDialog("Whoops", "Select a file to remove");
+                    NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
                 }
             }
         });
@@ -72,6 +68,25 @@ public class MainWindow {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
+        // Note that this is not the place for NEW components
+        // It is only to setup components that have been marked custom
+
+        listModel = new DefaultListModel<String>();
+        searchFilesList = new JList<>(listModel);
+
+        String[] columnNames = {"Name",
+                "Super Power",
+                "Can Fly?"};
+
+        Object[][] data = {
+                {"Batman", "Money", Boolean.FALSE},
+                {"Superman", "Everything", Boolean.TRUE},
+                {"Flash", "Really fast", Boolean.FALSE},
+                {"Goku", "Can't Die :^)", Boolean.TRUE},
+                {"The Hulk", "The Ability to turn into a doctor",  Boolean.FALSE}
+        };
+
+        resultsTable = new JTable(data, columnNames);
     }
 
     /**
@@ -108,7 +123,6 @@ public class MainWindow {
         tabbedPane1.addTab("Search Results", panel3);
         final JScrollPane scrollPane1 = new JScrollPane();
         panel3.add(scrollPane1, BorderLayout.CENTER);
-        resultsTable = new JTable();
         resultsTable.putClientProperty("Table.isFileList", Boolean.FALSE);
         scrollPane1.setViewportView(resultsTable);
         final JPanel panel4 = new JPanel();
@@ -127,9 +141,12 @@ public class MainWindow {
         panel4.add(removeSelectedFileButton, BorderLayout.SOUTH);
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new BorderLayout(0, 0));
-        mainPane.add(panel6, BorderLayout.SOUTH);
+        tabbedPane1.addTab("Database Administration", panel6);
+        final JPanel panel7 = new JPanel();
+        panel7.setLayout(new BorderLayout(0, 0));
+        mainPane.add(panel7, BorderLayout.SOUTH);
         final JToolBar toolBar1 = new JToolBar();
-        panel6.add(toolBar1, BorderLayout.CENTER);
+        panel7.add(toolBar1, BorderLayout.CENTER);
         progressBar1 = new JProgressBar();
         toolBar1.add(progressBar1);
         label1.setLabelFor(searchTextField);

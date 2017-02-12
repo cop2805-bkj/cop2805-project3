@@ -58,7 +58,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="cc0ef" class="javax.swing.JTable" binding="resultsTable">
+                      <component id="cc0ef" class="javax.swing.JTable" binding="resultsTable" custom-create="true">
                         <constraints/>
                         <properties/>
                         <clientProperties>
@@ -101,6 +101,14 @@
                     </properties>
                   </component>
                 </children>
+              </grid>
+              <grid id="af41a" layout-manager="BorderLayout" hgap="0" vgap="0">
+                <constraints>
+                  <tabbedpane title="Database Administration"/>
+                </constraints>
+                <properties/>
+                <border type="none"/>
+                <children/>
               </grid>
             </children>
           </tabbedpane>
