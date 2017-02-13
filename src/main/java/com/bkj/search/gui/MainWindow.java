@@ -19,6 +19,13 @@ public class MainWindow {
     private JButton chooseFilesButton;
     private JList<String> searchFilesList;
     private JButton removeSelectedFileButton;
+    private JButton selectDBButton;
+    private JButton aboutButton;
+    private JTextField databaseFileTextField;
+    private JCheckBox saveDatabaseCheckbox;
+    private JButton adminPageButton;
+    private JComboBox comboBox1;
+    private JCheckBox checkBox3;
 
     private DefaultListModel<String> listModel;
     private JFileChooser searchFilesChooser;
@@ -46,7 +53,6 @@ public class MainWindow {
                     File file = searchFilesChooser.getSelectedFile();
                     //This is where a real application would open the file.
                     listModel.addElement(file.toPath().toString());
-                    //searchFilesList.setModel(listModel);
                 } else {
                     // Canceled
                 }
@@ -74,6 +80,9 @@ public class MainWindow {
         listModel = new DefaultListModel<String>();
         searchFilesList = new JList<>(listModel);
 
+
+        // This is just test data so the table shows up
+        // everything here is subject to change
         String[] columnNames = {"Name",
                 "Super Power",
                 "Can Fly?"};
@@ -83,7 +92,7 @@ public class MainWindow {
                 {"Superman", "Everything", Boolean.TRUE},
                 {"Flash", "Really fast", Boolean.FALSE},
                 {"Goku", "Can't Die :^)", Boolean.TRUE},
-                {"The Hulk", "The Ability to turn into a doctor",  Boolean.FALSE}
+                {"The Hulk", "Turns Green & Angry", Boolean.FALSE}
         };
 
         resultsTable = new JTable(data, columnNames);
@@ -113,6 +122,13 @@ public class MainWindow {
         doSearchButton = new JButton();
         doSearchButton.setText("Go");
         panel1.add(doSearchButton);
+        comboBox1 = new JComboBox();
+        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
+        defaultComboBoxModel1.addElement("AND");
+        defaultComboBoxModel1.addElement("OR");
+        defaultComboBoxModel1.addElement("PHRASE");
+        comboBox1.setModel(defaultComboBoxModel1);
+        panel1.add(comboBox1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         mainPane.add(panel2, BorderLayout.CENTER);
@@ -127,7 +143,7 @@ public class MainWindow {
         scrollPane1.setViewportView(resultsTable);
         final JPanel panel4 = new JPanel();
         panel4.setLayout(new BorderLayout(0, 0));
-        tabbedPane1.addTab("Settings", panel4);
+        tabbedPane1.addTab("Files", panel4);
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new BorderLayout(0, 0));
         panel4.add(panel5, BorderLayout.NORTH);
@@ -140,13 +156,65 @@ public class MainWindow {
         removeSelectedFileButton.setText("Remove Selected File");
         panel4.add(removeSelectedFileButton, BorderLayout.SOUTH);
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new BorderLayout(0, 0));
-        tabbedPane1.addTab("Database Administration", panel6);
+        panel6.setLayout(new GridBagLayout());
+        tabbedPane1.addTab("Settings", panel6);
+        final JLabel label2 = new JLabel();
+        label2.setText("Database path");
+        GridBagConstraints gbc;
+        gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel6.add(label2, gbc);
+        selectDBButton = new JButton();
+        selectDBButton.setText("Select DB");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 5;
+        gbc.gridy = 0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel6.add(selectDBButton, gbc);
+        final JPanel spacer1 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel6.add(spacer1, gbc);
+        aboutButton = new JButton();
+        aboutButton.setText("About...");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 4;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel6.add(aboutButton, gbc);
+        databaseFileTextField = new JTextField();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        panel6.add(databaseFileTextField, gbc);
+        final JPanel spacer2 = new JPanel();
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 1;
+        gbc.fill = GridBagConstraints.VERTICAL;
+        panel6.add(spacer2, gbc);
+        saveDatabaseCheckbox = new JCheckBox();
+        saveDatabaseCheckbox.setText("Save database to disk");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 2;
+        gbc.anchor = GridBagConstraints.WEST;
+        panel6.add(saveDatabaseCheckbox, gbc);
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new BorderLayout(0, 0));
         mainPane.add(panel7, BorderLayout.SOUTH);
         final JToolBar toolBar1 = new JToolBar();
         panel7.add(toolBar1, BorderLayout.CENTER);
+        adminPageButton = new JButton();
+        adminPageButton.setText("Admin");
+        toolBar1.add(adminPageButton);
         progressBar1 = new JProgressBar();
         toolBar1.add(progressBar1);
         label1.setLabelFor(searchTextField);

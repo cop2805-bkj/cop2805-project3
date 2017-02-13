@@ -34,6 +34,16 @@
               <text value="Go"/>
             </properties>
           </component>
+          <component id="a98f8" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+            <constraints/>
+            <properties>
+              <model>
+                <item value="AND"/>
+                <item value="OR"/>
+                <item value="PHRASE"/>
+              </model>
+            </properties>
+          </component>
         </children>
       </grid>
       <grid id="41d08" layout-manager="BorderLayout" hgap="0" vgap="0">
@@ -71,7 +81,7 @@
               </grid>
               <grid id="2f5ba" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Settings"/>
+                  <tabbedpane title="Files"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -102,13 +112,74 @@
                   </component>
                 </children>
               </grid>
-              <grid id="af41a" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="af41a" layout-manager="GridBagLayout">
                 <constraints>
-                  <tabbedpane title="Database Administration"/>
+                  <tabbedpane title="Settings"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
-                <children/>
+                <children>
+                  <component id="56aa9" class="javax.swing.JLabel">
+                    <constraints>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="Database path"/>
+                    </properties>
+                  </component>
+                  <component id="e7e41" class="javax.swing.JButton" binding="selectDBButton" default-binding="true">
+                    <constraints>
+                      <grid row="0" column="5" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="Select DB"/>
+                    </properties>
+                  </component>
+                  <vspacer id="1648d">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="bb758" class="javax.swing.JButton" binding="aboutButton" default-binding="true">
+                    <constraints>
+                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="About..."/>
+                    </properties>
+                  </component>
+                  <component id="4a355" class="javax.swing.JTextField" binding="databaseFileTextField">
+                    <constraints>
+                      <grid row="0" column="1" row-span="1" col-span="2" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
+                        <preferred-size width="150" height="-1"/>
+                      </grid>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties/>
+                    <clientProperties>
+                      <caretAspectRatio class="java.lang.Float" value="0.04"/>
+                    </clientProperties>
+                  </component>
+                  <vspacer id="98e7f">
+                    <constraints>
+                      <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                  </vspacer>
+                  <component id="5f27d" class="javax.swing.JCheckBox" binding="saveDatabaseCheckbox">
+                    <constraints>
+                      <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="Save database to disk"/>
+                    </properties>
+                  </component>
+                </children>
               </grid>
             </children>
           </tabbedpane>
@@ -124,6 +195,12 @@
             <properties/>
             <border type="none"/>
             <children>
+              <component id="456bd" class="javax.swing.JButton" binding="adminPageButton">
+                <constraints/>
+                <properties>
+                  <text value="Admin"/>
+                </properties>
+              </component>
               <component id="17eaf" class="javax.swing.JProgressBar" binding="progressBar1" default-binding="true">
                 <constraints/>
                 <properties/>
