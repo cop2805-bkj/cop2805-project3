@@ -9,7 +9,8 @@ import java.io.File;
 /**
  * Created by bclaus on 2/9/17.
  */
-public class MainWindow {
+
+public class MainWindow implements Runnable {
     private JPanel topPanel;
     private JButton searchButton;
     private JTextField searchTextField;
@@ -35,9 +36,15 @@ public class MainWindow {
 
     private DefaultListModel<String> listModel;
     private JFileChooser searchFilesChooser;
+    private JFrame mainFrame;
 
     public MainWindow() {
         $$$setupUI$$$();
+        mainFrame = new JFrame("Search UI");
+
+        /**
+         * ACTION LISTENERS
+         */
 
         searchFilesChooser = new JFileChooser();
 
@@ -79,7 +86,6 @@ public class MainWindow {
             }
         });
 
-
         removeSelectedFileButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -100,7 +106,15 @@ public class MainWindow {
             }
         });
 
+    }
 
+    @Override
+    public void run() {
+        mainFrame.setContentPane($$$getRootComponent$$$());
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setPreferredSize(new Dimension(600, 600));
+        mainFrame.pack();
+        mainFrame.setVisible(true);
     }
 
     private void createUIComponents() {
@@ -114,16 +128,15 @@ public class MainWindow {
 
         // This is just test data so the table shows up
         // everything here is subject to change
-        String[] columnNames = {"Name",
-                "Super Power",
-                "Can Fly?"};
+        String[] columnNames = {"File",
+                "Line Number"};
 
         Object[][] data = {
-                {"Batman", "Money", Boolean.FALSE},
-                {"Superman", "Everything", Boolean.TRUE},
-                {"Flash", "Really fast", Boolean.FALSE},
-                {"Goku", "Can't Die :^)", Boolean.TRUE},
-                {"The Hulk", "Turns Green & Angry", Boolean.FALSE}
+                {"testdata1.txt", "23"},
+                {"testdata4.txt", "107"},
+                {"testdata5.txt", "8"},
+                {"testdata11.txt", "34"},
+                {"testdata15.txt", "20"}
         };
 
         resultsTable = new JTable(data, columnNames);
