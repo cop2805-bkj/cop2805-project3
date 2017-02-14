@@ -5,6 +5,9 @@
  */
 package com.bkj.search.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author Kelvin
@@ -16,6 +19,34 @@ public class MaintenanceWindow extends javax.swing.JFrame {
      */
     public MaintenanceWindow() {
         initComponents();
+        
+         Return.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Return button does not work yet");
+            }
+        });
+        
+        Update.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Update button does not work yet");
+            }
+        });
+        
+        Remove.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Remove button does not work yet");
+            }
+        });
+        
+        AddFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Adding a file does not work yet");
+            }
+        });
     }
 
     /**
@@ -34,9 +65,7 @@ public class MaintenanceWindow extends javax.swing.JFrame {
         AddFile = new javax.swing.JButton();
         Remove = new javax.swing.JButton();
         Update = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        Return = new javax.swing.JButton();
 
         lblHeader.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         lblHeader.setText("Index Maintenace");
@@ -61,7 +90,7 @@ public class MaintenanceWindow extends javax.swing.JFrame {
 
         Update.setText("Update");
 
-        jButton1.setText("Return...");
+        Return.setText("Return...");
 
         javax.swing.GroupLayout panelMaintenanceWindowLayout = new javax.swing.GroupLayout(panelMaintenanceWindow);
         panelMaintenanceWindow.setLayout(panelMaintenanceWindowLayout);
@@ -75,7 +104,7 @@ public class MaintenanceWindow extends javax.swing.JFrame {
             .addGroup(panelMaintenanceWindowLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(panelMaintenanceWindowLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(Return, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(panelMaintenanceWindowLayout.createSequentialGroup()
                         .addComponent(AddFile)
                         .addGap(95, 95, 95)
@@ -97,7 +126,7 @@ public class MaintenanceWindow extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(myPane, javax.swing.GroupLayout.PREFERRED_SIZE, 366, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(13, 13, 13)
-                .addComponent(jButton1))
+                .addComponent(Return))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -159,8 +188,8 @@ public class MaintenanceWindow extends javax.swing.JFrame {
     private javax.swing.JButton AddFile;
     private javax.swing.JTable MaintenanceTable;
     private javax.swing.JButton Remove;
+    private javax.swing.JButton Return;
     private javax.swing.JButton Update;
-    private javax.swing.JButton jButton1;
     private javax.swing.JLabel lblHeader;
     private javax.swing.JScrollPane myPane;
     private javax.swing.JPanel panelMaintenanceWindow;
