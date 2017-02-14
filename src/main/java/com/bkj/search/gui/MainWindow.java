@@ -42,7 +42,22 @@ public class MainWindow {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
             }
         });
-
+        
+        selectDBButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Database path does not work yet");
+            }
+        });
+        
+        aboutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                AboutWindow win = new AboutWindow();
+                win.getAccessibleContext();
+                win.setVisible(true);
+            }
+        });
 
         chooseFilesButton.addActionListener(new ActionListener() {
             @Override
@@ -120,26 +135,26 @@ public class MainWindow {
         createUIComponents();
         mainPane = new JPanel();
         mainPane.setLayout(new BorderLayout(0, 0));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        mainPane.add(panel1, BorderLayout.NORTH);
-        panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
-        final JLabel label1 = new JLabel();
-        label1.setText("Search ");
-        panel1.add(label1);
+        final JPanel topPanel = new JPanel();
+        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        mainPane.add(topPanel, BorderLayout.NORTH);
+        topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
+        final JLabel searchLabel = new JLabel();
+        searchLabel.setText("Search ");
+        topPanel.add(searchLabel);
         searchTextField = new JTextField();
         searchTextField.setColumns(20);
-        panel1.add(searchTextField);
+        topPanel.add(searchTextField);
         doSearchButton = new JButton();
         doSearchButton.setText("Go");
-        panel1.add(doSearchButton);
+        topPanel.add(doSearchButton);
         comboBox1 = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("AND");
         defaultComboBoxModel1.addElement("OR");
         defaultComboBoxModel1.addElement("PHRASE");
         comboBox1.setModel(defaultComboBoxModel1);
-        panel1.add(comboBox1);
+        topPanel.add(comboBox1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         mainPane.add(panel2, BorderLayout.CENTER);
@@ -228,7 +243,7 @@ public class MainWindow {
         toolBar1.add(adminPageButton);
         progressBar1 = new JProgressBar();
         toolBar1.add(progressBar1);
-        label1.setLabelFor(searchTextField);
+        searchLabel.setLabelFor(searchTextField);
     }
 
     /**
