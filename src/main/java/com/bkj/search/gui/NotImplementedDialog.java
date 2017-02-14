@@ -5,10 +5,12 @@ import java.awt.*;
 import java.awt.event.*;
 
 public class NotImplementedDialog extends JDialog {
-    private JPanel contentPane;
+    private JPanel contentPanel;
     private JButton buttonOK;
     private JButton buttonCancel;
     private JLabel dialogMessage;
+    private JPanel buttonsPanel;
+    private JPanel messagePanel;
 
 
     public NotImplementedDialog() {
@@ -16,7 +18,7 @@ public class NotImplementedDialog extends JDialog {
     }
 
     public NotImplementedDialog(String title, String message) {
-        setContentPane(contentPane);
+        setContentPane(contentPanel);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
@@ -41,7 +43,7 @@ public class NotImplementedDialog extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
+        contentPanel.registerKeyboardAction(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onCancel();
             }
@@ -79,32 +81,32 @@ public class NotImplementedDialog extends JDialog {
      * @noinspection ALL
      */
     private void $$$setupUI$$$() {
-        contentPane = new JPanel();
-        contentPane.setLayout(new BorderLayout(0, 0));
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new BorderLayout(0, 0));
-        contentPane.add(panel1, BorderLayout.CENTER);
+        contentPanel = new JPanel();
+        contentPanel.setLayout(new BorderLayout(0, 0));
+        messagePanel = new JPanel();
+        messagePanel.setLayout(new BorderLayout(0, 0));
+        contentPanel.add(messagePanel, BorderLayout.CENTER);
         dialogMessage = new JLabel();
         dialogMessage.setText("No Message");
-        panel1.add(dialogMessage, BorderLayout.CENTER);
-        final JPanel panel2 = new JPanel();
-        panel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        contentPane.add(panel2, BorderLayout.SOUTH);
-        final JPanel panel3 = new JPanel();
-        panel3.setLayout(new BorderLayout(0, 0));
-        panel2.add(panel3);
+        messagePanel.add(dialogMessage, BorderLayout.CENTER);
+        buttonsPanel = new JPanel();
+        buttonsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        contentPanel.add(buttonsPanel, BorderLayout.SOUTH);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new BorderLayout(0, 0));
+        buttonsPanel.add(panel1);
         buttonOK = new JButton();
         buttonOK.setText("OK");
-        panel3.add(buttonOK, BorderLayout.WEST);
+        panel1.add(buttonOK, BorderLayout.WEST);
         buttonCancel = new JButton();
         buttonCancel.setText("Cancel");
-        panel3.add(buttonCancel, BorderLayout.CENTER);
+        panel1.add(buttonCancel, BorderLayout.CENTER);
     }
 
     /**
      * @noinspection ALL
      */
     public JComponent $$$getRootComponent$$$() {
-        return contentPane;
+        return contentPanel;
     }
 }

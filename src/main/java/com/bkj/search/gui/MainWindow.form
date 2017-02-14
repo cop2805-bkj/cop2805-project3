@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.bkj.search.gui.MainWindow">
-  <grid id="27dc6" binding="mainPane" layout-manager="BorderLayout" hgap="0" vgap="0">
+  <grid id="27dc6" binding="topPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="882f6" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+      <grid id="882f6" binding="searchPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
         <constraints border-constraint="North"/>
         <properties/>
         <border type="line"/>
@@ -28,13 +28,13 @@
               <caretAspectRatio class="java.lang.Float" value="0.04"/>
             </clientProperties>
           </component>
-          <component id="e158b" class="javax.swing.JButton" binding="doSearchButton">
+          <component id="e158b" class="javax.swing.JButton" binding="searchButton">
             <constraints/>
             <properties>
               <text value="Go"/>
             </properties>
           </component>
-          <component id="a98f8" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+          <component id="a98f8" class="javax.swing.JComboBox" binding="searchComboBox">
             <constraints/>
             <properties>
               <model>
@@ -46,7 +46,7 @@
           </component>
         </children>
       </grid>
-      <grid id="41d08" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="41d08" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>
@@ -56,7 +56,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="55fda" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="55fda" binding="resultsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
                   <tabbedpane title="Search Results"/>
                 </constraints>
@@ -79,7 +79,7 @@
                   </scrollpane>
                 </children>
               </grid>
-              <grid id="2f5ba" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="2f5ba" binding="filesListPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
                   <tabbedpane title="Files"/>
                 </constraints>
@@ -112,7 +112,7 @@
                   </component>
                 </children>
               </grid>
-              <grid id="af41a" layout-manager="GridBagLayout">
+              <grid id="af41a" binding="settingsPagePanel" layout-manager="GridBagLayout">
                 <constraints>
                   <tabbedpane title="Settings"/>
                 </constraints>
@@ -185,7 +185,7 @@
           </tabbedpane>
         </children>
       </grid>
-      <grid id="bcb38" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="bcb38" binding="toolbarPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="South"/>
         <properties/>
         <border type="none"/>
