@@ -70,6 +70,17 @@ public class MainWindow {
                 }
             }
         });
+        
+        adminPageButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent){
+                MaintenanceWindow win = new MaintenanceWindow();
+                win.getAccessibleContext();
+                win.setVisible(true);
+            }
+        });
+        
+        
     }
 
     private void createUIComponents() {
