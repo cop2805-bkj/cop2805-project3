@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by bclaus on 2/9/17.
@@ -42,12 +43,13 @@ public class MainWindow implements Runnable {
         $$$setupUI$$$();
         mainFrame = new JFrame("Search UI");
 
-        /**
-         * ACTION LISTENERS
-         */
 
         searchFilesChooser = new JFileChooser();
 
+        /**
+         * ACTION LISTENERS
+         *
+         */
         searchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -100,12 +102,10 @@ public class MainWindow implements Runnable {
         adminPageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                MaintenanceWindow win = new MaintenanceWindow();
-                win.getAccessibleContext();
-                win.setVisible(true);
+                AdministrationWindow win = new AdministrationWindow();
+                SwingUtilities.invokeLater(win);
             }
         });
-
     }
 
     @Override
