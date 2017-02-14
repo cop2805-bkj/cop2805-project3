@@ -5,6 +5,9 @@
  */
 package com.bkj.search.gui;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 /**
  *
  * @author Kelvin
@@ -16,6 +19,34 @@ public class MaintenanceWindow extends javax.swing.JFrame {
      */
     public MaintenanceWindow() {
         initComponents();
+        
+         Return.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Return button does not work yet");
+            }
+        });
+        
+        Update.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Update button does not work yet");
+            }
+        });
+        
+        Remove.addActionListener(new ActionListener () {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Remove button does not work yet");
+            }
+        });
+        
+        AddFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Adding a file does not work yet");
+            }
+        });
     }
 
     /**
@@ -35,8 +66,6 @@ public class MaintenanceWindow extends javax.swing.JFrame {
         Remove = new javax.swing.JButton();
         Update = new javax.swing.JButton();
         Return = new javax.swing.JButton();
-
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         lblHeader.setFont(new java.awt.Font("Tahoma", 1, 24)); // NOI18N
         lblHeader.setText("Index Maintenace");
@@ -62,11 +91,6 @@ public class MaintenanceWindow extends javax.swing.JFrame {
         Update.setText("Update");
 
         Return.setText("Return...");
-        Return.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ReturnActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout panelMaintenanceWindowLayout = new javax.swing.GroupLayout(panelMaintenanceWindow);
         panelMaintenanceWindow.setLayout(panelMaintenanceWindowLayout);
