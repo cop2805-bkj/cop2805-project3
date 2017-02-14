@@ -149,6 +149,10 @@ public class MaintenanceWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void ReturnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReturnActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_ReturnActionPerformed
+
     /**
      * @param args the command line arguments
      */

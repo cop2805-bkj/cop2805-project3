@@ -149,6 +149,9 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Return..."/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ReturnActionPerformed"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>
