@@ -29,7 +29,6 @@ public class MainWindow {
 
     private DefaultListModel<String> listModel;
     private JFileChooser searchFilesChooser;
-    private int fcRetval;
 
     public MainWindow() {
         $$$setupUI$$$();
@@ -42,14 +41,14 @@ public class MainWindow {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
             }
         });
-        
+
         selectDBButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Database path does not work yet");
             }
         });
-        
+
         aboutButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -64,7 +63,7 @@ public class MainWindow {
             public void actionPerformed(ActionEvent actionEvent) {
                 int fcRetVal = searchFilesChooser.showOpenDialog(mainPane);
 
-                if (fcRetval == JFileChooser.APPROVE_OPTION) {
+                if (fcRetVal == JFileChooser.APPROVE_OPTION) {
                     File file = searchFilesChooser.getSelectedFile();
                     //This is where a real application would open the file.
                     listModel.addElement(file.toPath().toString());
@@ -85,17 +84,17 @@ public class MainWindow {
                 }
             }
         });
-        
+
         adminPageButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent actionEvent){
+            public void actionPerformed(ActionEvent actionEvent) {
                 MaintenanceWindow win = new MaintenanceWindow();
                 win.getAccessibleContext();
                 win.setVisible(true);
             }
         });
-        
-        
+
+
     }
 
     private void createUIComponents() {
@@ -135,26 +134,26 @@ public class MainWindow {
         createUIComponents();
         mainPane = new JPanel();
         mainPane.setLayout(new BorderLayout(0, 0));
-        final JPanel topPanel = new JPanel();
-        topPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
-        mainPane.add(topPanel, BorderLayout.NORTH);
-        topPanel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
-        final JLabel searchLabel = new JLabel();
-        searchLabel.setText("Search ");
-        topPanel.add(searchLabel);
+        final JPanel panel1 = new JPanel();
+        panel1.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        mainPane.add(panel1, BorderLayout.NORTH);
+        panel1.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.black), null));
+        final JLabel label1 = new JLabel();
+        label1.setText("Search ");
+        panel1.add(label1);
         searchTextField = new JTextField();
         searchTextField.setColumns(20);
-        topPanel.add(searchTextField);
+        panel1.add(searchTextField);
         doSearchButton = new JButton();
         doSearchButton.setText("Go");
-        topPanel.add(doSearchButton);
+        panel1.add(doSearchButton);
         comboBox1 = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
         defaultComboBoxModel1.addElement("AND");
         defaultComboBoxModel1.addElement("OR");
         defaultComboBoxModel1.addElement("PHRASE");
         comboBox1.setModel(defaultComboBoxModel1);
-        topPanel.add(comboBox1);
+        panel1.add(comboBox1);
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new BorderLayout(0, 0));
         mainPane.add(panel2, BorderLayout.CENTER);
@@ -243,7 +242,7 @@ public class MainWindow {
         toolBar1.add(adminPageButton);
         progressBar1 = new JProgressBar();
         toolBar1.add(progressBar1);
-        searchLabel.setLabelFor(searchTextField);
+        label1.setLabelFor(searchTextField);
     }
 
     /**
