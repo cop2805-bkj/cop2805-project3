@@ -2,14 +2,12 @@ package com.bkj.search.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
 /**
- * Created by bclaus on 2/9/17.
+ * @see java.lang.Runnable
+ * @since 0.1
  */
-
 public class MainWindow implements Runnable {
     private JPanel topPanel;
     private JButton searchButton;
@@ -38,6 +36,14 @@ public class MainWindow implements Runnable {
     private JFileChooser searchFilesChooser;
     private JFrame mainFrame;
 
+
+    /**
+     * creates a new main window frame along with content
+     * <p>
+     * Calls IntelliJ 'entry point' $$$setupUI$$$() and creates actionEvents for buttons
+     * UI components
+     * </p>
+     */
     public MainWindow() {
         $$$setupUI$$$();
         mainFrame = new JFrame("Search UI");
@@ -79,17 +85,33 @@ public class MainWindow implements Runnable {
             AdministrationWindow win = new AdministrationWindow();
             SwingUtilities.invokeLater(win);
         });
-    }
 
-    @Override
-    public void run() {
+
+        // The last thing we do is set the content panel and some frame specifics
+        // TODO: should we check the return value of $$$getRootComponent$$$() for NULL?
         mainFrame.setContentPane($$$getRootComponent$$$());
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setPreferredSize(new Dimension(600, 600));
+    }
+
+    /**
+     * calls JDialog::pack and sets the dialog visible
+     * @see java.lang.Runnable
+     */
+    @Override
+    public void run() {
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
 
+    /**
+     * For UI components marked 'Custom Create'
+     * <p>
+     *     Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
+     *     this allows greater control over how objects are made instead of the default
+     *     parameter-less constructor
+     * </p>
+     */
     private void createUIComponents() {
         // TODO: place custom component creation code here
         // Note that this is not the place for NEW components
@@ -239,6 +261,7 @@ public class MainWindow implements Runnable {
 
     /**
      * @noinspection ALL
+     * @return A JComponent (generally a JPanel) that is contains the UI
      */
     public JComponent $$$getRootComponent$$$() {
         return topPanel;

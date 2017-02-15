@@ -4,7 +4,13 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class NotImplementedDialog extends JDialog {
+/**
+ * @see java.lang.Runnable
+ * @since 0.1
+ */
+public class NotImplementedDialog extends JDialog
+                                  implements Runnable {
+
     private JPanel contentPanel;
     private JButton buttonOK;
     private JButton buttonCancel;
@@ -12,11 +18,19 @@ public class NotImplementedDialog extends JDialog {
     private JPanel buttonsPanel;
     private JPanel messagePanel;
 
-
+    /**
+     * creates a 'blank' NotImplementedDialog
+     * @see com.bkj.search.gui.NotImplementedDialog::NotImplementedDialog(String,String)
+     */
     public NotImplementedDialog() {
         new NotImplementedDialog("UNKNOWN", "NO MESSAGE");
     }
 
+    /**
+     * Creates a NotImplemented Dialog
+     * @param title Title of the dialog window to create
+     * @param message Message to be displayed in dialog window
+     */
     public NotImplementedDialog(String title, String message) {
         setContentPane(contentPanel);
         setModal(true);
@@ -35,23 +49,38 @@ public class NotImplementedDialog extends JDialog {
         });
 
         // call onCancel() on ESCAPE
-        contentPanel.registerKeyboardAction(e -> onCancel(), KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPanel.registerKeyboardAction(e -> onCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
         setTitle(title);
         dialogMessage.setText(message);
 
+
+    }
+
+    /**
+     * Handles on exit tasks when 'Ok' is pressed
+     */
+    private void onOK() {
+        dispose();
+    }
+
+    /**
+     * Handles on exit tasks when 'Cancel' is pressed or exiting
+     */
+    private void onCancel() {
+        dispose();
+    }
+
+    /**
+     * calls JDialog::pack and sets the dialog visible
+     * @see java.lang.Runnable
+     */
+    @Override
+    public void run() {
         pack();
         setVisible(true);
-    }
-
-    private void onOK() {
-        // add your code here
-        dispose();
-    }
-
-    private void onCancel() {
-        // add your code here if necessary
-        dispose();
     }
 
     {
@@ -97,4 +126,5 @@ public class NotImplementedDialog extends JDialog {
     public JComponent $$$getRootComponent$$$() {
         return contentPanel;
     }
+
 }

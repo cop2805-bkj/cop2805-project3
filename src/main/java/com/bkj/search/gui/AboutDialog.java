@@ -4,6 +4,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+
+/**
+ * @see java.lang.Runnable
+ * @since 0.1
+ */
 public class AboutDialog extends JDialog
         implements Runnable {
 
@@ -11,18 +16,27 @@ public class AboutDialog extends JDialog
     private JButton buttonOK;
     private JButton buttonCancel;
 
+    /**
+     * Sets up and creates the About Dialog
+     * <p>
+     * You still need to run the AboutDialog::run method to display the window
+     * preferably with SwingUtilities.InvokeLater(new AboutDialog());
+     * </p>
+     */
     public AboutDialog() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        buttonOK.addActionListener(e -> onOK());
+        buttonOK.addActionListener((ActionEvent e) -> onOK());
 
-        buttonCancel.addActionListener(e -> onCancel());
+        buttonCancel.addActionListener((ActionEvent e) -> onCancel());
 
-        // call onCancel() when cross is clicked
+        // call onCancel() when cross is clicked instead of disposing the window
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        // This cannot be converted to a lambda because WindowAdapter is not a functional interface
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 onCancel();
             }
@@ -34,17 +48,29 @@ public class AboutDialog extends JDialog
                 JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     }
 
+
+    /**
+     * calls JDialog::pack and sets the dialog visible
+     * @see java.lang.Runnable
+     */
     @Override
     public void run() {
         pack();
         setVisible(true);
     }
 
+
+    /**
+     * Handles on exit tasks when 'Ok' is pressed
+     */
     private void onOK() {
         // add your code here
         dispose();
     }
 
+    /**
+     * Handles on exit tasks when 'Cancel' is pressed or exiting
+     */
     private void onCancel() {
         // add your code here if necessary
         dispose();

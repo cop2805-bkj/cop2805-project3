@@ -2,11 +2,10 @@ package com.bkj.search.gui;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
- * Created by bclaus on 2/14/17.
+ * @since 0.1
+ * @see java.lang.Runnable
  */
 public class AdministrationWindow implements Runnable {
     private JPanel topPanel;
@@ -20,29 +19,46 @@ public class AdministrationWindow implements Runnable {
 
     private JFrame mainFrame;
 
+    /**
+     * Creates a default Administration Window to manage index files
+     */
     public AdministrationWindow() {
         $$$setupUI$$$();
         closeFormButton.addActionListener(actionEvent -> mainFrame.dispose());
-        addIndexButton.addActionListener(actionEvent -> {
 
+        addIndexButton.addActionListener(actionEvent -> {
+            // TODO: event handler for adding a index directly
         });
         removeIndexButton.addActionListener(actionEvent -> {
-
+            // TODO: event handler for removing a index directly
         });
         updateIndexButton.addActionListener(actionEvent -> {
-
+            // TODO: event handler to force a update of a index from the backing file
         });
-    }
 
-    @Override
-    public void run() {
         mainFrame.setContentPane($$$getRootComponent$$$());
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         mainFrame.setPreferredSize(new Dimension(400, 400));
+    }
+
+    /**
+     * calls JDialog::pack and sets the dialog visible
+     * @see java.lang.Runnable
+     */
+    @Override
+    public void run() {
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
 
+    /**
+     * For UI components marked 'Custom Create'
+     * <p>
+     *     Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
+     *     this allows greater control over how objects are made instead of the default
+     *     parameter-less constructor
+     * </p>
+     */
     private void createUIComponents() {
         // TODO: place custom component creation code here
         mainFrame = new JFrame("Index Administration");
