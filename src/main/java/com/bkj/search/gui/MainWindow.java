@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by bclaus on 2/9/17.
@@ -46,65 +45,39 @@ public class MainWindow implements Runnable {
 
         searchFilesChooser = new JFileChooser();
 
-        /**
-         * ACTION LISTENERS
-         *
-         */
-        searchButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
+        searchButton.addActionListener(actionEvent -> {
+            NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
+        });
+
+        selectDBButton.addActionListener(actionEvent -> {
+            NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Database path does not work yet");
+        });
+
+        aboutButton.addActionListener(actionEvent -> SwingUtilities.invokeLater(new AboutDialog()));
+
+        chooseFilesButton.addActionListener(actionEvent -> {
+            int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
+
+            if (fcRetVal == JFileChooser.APPROVE_OPTION) {
+                File file = searchFilesChooser.getSelectedFile();
+                //This is where a real application would open the file.
+                listModel.addElement(file.toPath().toString());
+            } else {
+                // Canceled
             }
         });
 
-        selectDBButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Database path does not work yet");
+        removeSelectedFileButton.addActionListener(actionEvent -> {
+            try {
+                listModel.remove(searchFilesList.getSelectedIndex());
+            } catch (ArrayIndexOutOfBoundsException aie) {
+                NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
             }
         });
 
-        aboutButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                AboutWindow win = new AboutWindow();
-                win.getAccessibleContext();
-                win.setVisible(true);
-            }
-        });
-
-        chooseFilesButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
-
-                if (fcRetVal == JFileChooser.APPROVE_OPTION) {
-                    File file = searchFilesChooser.getSelectedFile();
-                    //This is where a real application would open the file.
-                    listModel.addElement(file.toPath().toString());
-                } else {
-                    // Canceled
-                }
-            }
-        });
-
-        removeSelectedFileButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                try {
-                    listModel.remove(searchFilesList.getSelectedIndex());
-                } catch (ArrayIndexOutOfBoundsException aie) {
-                    NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
-                }
-            }
-        });
-
-        adminPageButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                AdministrationWindow win = new AdministrationWindow();
-                SwingUtilities.invokeLater(win);
-            }
+        adminPageButton.addActionListener(actionEvent -> {
+            AdministrationWindow win = new AdministrationWindow();
+            SwingUtilities.invokeLater(win);
         });
     }
 

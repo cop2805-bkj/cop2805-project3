@@ -22,29 +22,15 @@ public class AdministrationWindow implements Runnable {
 
     public AdministrationWindow() {
         $$$setupUI$$$();
-        closeFormButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
-                mainFrame.dispose();
-            }
-        });
-        addIndexButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        closeFormButton.addActionListener(actionEvent -> mainFrame.dispose());
+        addIndexButton.addActionListener(actionEvent -> {
 
-            }
         });
-        removeIndexButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        removeIndexButton.addActionListener(actionEvent -> {
 
-            }
         });
-        updateIndexButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent actionEvent) {
+        updateIndexButton.addActionListener(actionEvent -> {
 
-            }
         });
     }
 
