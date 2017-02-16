@@ -87,7 +87,7 @@ public class MainWindow {
                 }
             }
         });
-`       
+       
         // Opens up admin page
         adminPageButton.addActionListener(new ActionListener() {
             @Override
