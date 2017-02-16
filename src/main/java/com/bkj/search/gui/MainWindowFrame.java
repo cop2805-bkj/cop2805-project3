@@ -9,12 +9,13 @@ import java.awt.*;
 public class MainWindowFrame implements Runnable {
     private MainWindow windowContents;
     private JFrame mainFrame;
-
+    
+    // Creating JFrame
     public MainWindowFrame() {
         windowContents = new MainWindow();
         mainFrame = new JFrame("Search UI");
     }
-
+    // Runs JFrame
     @Override
     public void run() {
         mainFrame.setContentPane(windowContents.$$$getRootComponent$$$());
