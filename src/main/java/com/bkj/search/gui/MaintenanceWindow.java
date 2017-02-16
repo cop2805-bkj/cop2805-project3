@@ -20,6 +20,7 @@ public class MaintenanceWindow extends javax.swing.JFrame {
     public MaintenanceWindow() {
         initComponents();
         
+         // Adds action listeners for buttons
          Return.addActionListener(new ActionListener () {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -57,7 +58,8 @@ public class MaintenanceWindow extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+        
+        // Initializes components
         panelMaintenanceWindow = new javax.swing.JPanel();
         lblHeader = new javax.swing.JLabel();
         myPane = new javax.swing.JScrollPane();
@@ -180,7 +182,7 @@ public class MaintenanceWindow extends javax.swing.JFrame {
         }
         //</editor-fold>
 
-        /* Create and display the form */
+        // Displays Window
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new MaintenanceWindow().setVisible(true);
