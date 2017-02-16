@@ -5,11 +5,11 @@ import java.awt.*;
 import java.awt.event.*;
 
 /**
- * @see java.lang.Runnable
+ * @see Runnable
  * @since 0.1
  */
 public class NotImplementedDialog extends JDialog
-                                  implements Runnable {
+        implements Runnable {
 
     private JPanel contentPanel;
     private JButton buttonOK;
@@ -20,7 +20,8 @@ public class NotImplementedDialog extends JDialog
 
     /**
      * creates a 'blank' NotImplementedDialog
-     * @see com.bkj.search.gui.NotImplementedDialog::NotImplementedDialog(String,String)
+     *
+     * @see NotImplementedDialog::NotImplementedDialog(String,String)
      */
     public NotImplementedDialog() {
         new NotImplementedDialog("UNKNOWN", "NO MESSAGE");
@@ -28,7 +29,8 @@ public class NotImplementedDialog extends JDialog
 
     /**
      * Creates a NotImplemented Dialog
-     * @param title Title of the dialog window to create
+     *
+     * @param title   Title of the dialog window to create
      * @param message Message to be displayed in dialog window
      */
     public NotImplementedDialog(String title, String message) {
@@ -75,7 +77,8 @@ public class NotImplementedDialog extends JDialog
 
     /**
      * calls JDialog::pack and sets the dialog visible
-     * @see java.lang.Runnable
+     *
+     * @see Runnable
      */
     @Override
     public void run() {
@@ -126,5 +129,4 @@ public class NotImplementedDialog extends JDialog
     public JComponent $$$getRootComponent$$$() {
         return contentPanel;
     }
-
 }

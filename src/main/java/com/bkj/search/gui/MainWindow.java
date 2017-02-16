@@ -45,11 +45,7 @@ public class MainWindow implements Runnable {
      * </p>
      */
     public MainWindow() {
-        $$$setupUI$$$();
-        mainFrame = new JFrame("Search UI");
-
-
-        searchFilesChooser = new JFileChooser();
+        $$$setupUI$$$(); // This must be first
 
         searchButton.addActionListener(actionEvent -> {
             NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
@@ -63,16 +59,15 @@ public class MainWindow implements Runnable {
 
         chooseFilesButton.addActionListener(actionEvent -> {
             int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
-
             if (fcRetVal == JFileChooser.APPROVE_OPTION) {
                 File file = searchFilesChooser.getSelectedFile();
                 //This is where a real application would open the file.
+                // TODO: Handle multiple files and recursive searching by selecting directories
                 listModel.addElement(file.toPath().toString());
-            } else {
-                // Canceled
             }
         });
 
+        // Removes selected file in file list
         removeSelectedFileButton.addActionListener(actionEvent -> {
             try {
                 listModel.remove(searchFilesList.getSelectedIndex());
@@ -81,6 +76,7 @@ public class MainWindow implements Runnable {
             }
         });
 
+        // Opens Admin Page
         adminPageButton.addActionListener(actionEvent -> {
             AdministrationWindow win = new AdministrationWindow();
             SwingUtilities.invokeLater(win);
@@ -113,6 +109,9 @@ public class MainWindow implements Runnable {
      * </p>
      */
     private void createUIComponents() {
+        mainFrame = new JFrame("Search UI");
+        searchFilesChooser = new JFileChooser();
+
         // TODO: place custom component creation code here
         // Note that this is not the place for NEW components
         // It is only to setup components that have been marked custom
