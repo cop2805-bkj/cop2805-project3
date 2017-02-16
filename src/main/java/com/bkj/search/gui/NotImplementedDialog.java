@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+// Declares components
 public class NotImplementedDialog extends JDialog {
     private JPanel contentPane;
     private JButton buttonOK;
@@ -19,7 +20,8 @@ public class NotImplementedDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
-
+        
+        // Adds action listeners
         buttonOK.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 onOK();
@@ -78,6 +80,7 @@ public class NotImplementedDialog extends JDialog {
      *
      * @noinspection ALL
      */
+    // Adds components to Window
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout(0, 0));
@@ -104,6 +107,7 @@ public class NotImplementedDialog extends JDialog {
     /**
      * @noinspection ALL
      */
+    // Returns contentPane
     public JComponent $$$getRootComponent$$$() {
         return contentPane;
     }
