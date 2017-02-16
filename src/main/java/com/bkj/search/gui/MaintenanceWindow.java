@@ -27,21 +27,21 @@ public class MaintenanceWindow extends javax.swing.JFrame {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Return button does not work yet");
             }
         });
-        
+        // Adds action listeners for buttons
         Update.addActionListener(new ActionListener () {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Update button does not work yet");
             }
         });
-        
+        // Adds action listeners for buttons
         Remove.addActionListener(new ActionListener () {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Remove button does not work yet");
             }
         });
-        
+        // Adds action listeners for buttons
         AddFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
