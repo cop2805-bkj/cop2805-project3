@@ -10,6 +10,8 @@ import java.io.File;
  * Created by bclaus on 2/9/17.
  */
 public class MainWindow {
+    
+    // Declares components for the Window
     private JPanel mainPane;
     private JButton doSearchButton;
     private JTextField searchTextField;
@@ -34,7 +36,8 @@ public class MainWindow {
         $$$setupUI$$$();
 
         searchFilesChooser = new JFileChooser();
-
+        
+        // Adds action listeners to buttons
         doSearchButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -84,7 +87,8 @@ public class MainWindow {
                 }
             }
         });
-
+`       
+        // Opens up admin page
         adminPageButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -130,6 +134,7 @@ public class MainWindow {
      *
      * @noinspection ALL
      */
+    // Adding components to Window
     private void $$$setupUI$$$() {
         createUIComponents();
         mainPane = new JPanel();
@@ -248,6 +253,7 @@ public class MainWindow {
     /**
      * @noinspection ALL
      */
+    // Returns mainPane
     public JComponent $$$getRootComponent$$$() {
         return mainPane;
     }
