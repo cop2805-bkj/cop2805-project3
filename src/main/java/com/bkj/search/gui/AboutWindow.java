@@ -21,7 +21,8 @@ public class AboutWindow extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
+        
+        // Adding components to Window and details
         aboutPanel = new javax.swing.JPanel();
         aboutTitle = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -83,7 +84,7 @@ public class AboutWindow extends javax.swing.JFrame {
     public static void main(String args[]) {
         
 
-        // Create and display the form 
+        // Displays the form 
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new AboutWindow().setVisible(false);
