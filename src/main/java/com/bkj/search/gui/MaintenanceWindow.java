@@ -7,7 +7,9 @@ package com.bkj.search.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.JTextArea;
 /**
  *
  * @author Kelvin
@@ -17,6 +19,10 @@ public class MaintenanceWindow extends javax.swing.JFrame {
     /**
      * Creates new form MaintenanceWindow
      */
+    // Creates a file chooser
+    final JFileChooser fc = new JFileChooser();
+    JTextArea log;
+    
     public MaintenanceWindow() {
         initComponents();
         
@@ -41,11 +47,22 @@ public class MaintenanceWindow extends javax.swing.JFrame {
                 NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Remove button does not work yet");
             }
         });
-        // Adds action listeners for buttons
+        // Brings up a file chooser.-Kelvin
         AddFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
-                NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Adding a file does not work yet");
+                if (actionEvent.getSource() == AddFile) {
+                    int returnVal;
+                    returnVal = fc.showOpenDialog(MaintenanceWindow.this);
+
+                    if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File file = fc.getSelectedFile();
+                    //This is where a real application would open the file.
+                    log.append("Opening: " + file.getName() + "." + "\n");
+                    } else {
+                        log.append("Open command cancelled by user." + "\n");
+                    }
+                }
             }
         });
     }
