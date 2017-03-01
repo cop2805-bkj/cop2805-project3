@@ -1,8 +1,6 @@
 package com.bkj.search.gui;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import javax.swing.*;
 import java.awt.*;
@@ -30,7 +28,7 @@ public class MainWindow implements Runnable {
     private JButton selectDBButton;
     private JButton aboutButton;
     private JTextField databaseFileTextField;
-    private JCheckBox saveDatabaseCheckbox;
+    private JCheckBox useDatabaseCheckbox;
     private JButton adminPageButton;
     private JComboBox searchComboBox;
     private JPanel searchPanel;
@@ -39,6 +37,7 @@ public class MainWindow implements Runnable {
     private JPanel resultsPanel;
     private JPanel filesListPanel;
     private JPanel settingsPagePanel;
+    private JCheckBox saveSettingsOnExitCheckBox;
     private JCheckBox checkBox3;
 
     private DefaultListModel<String> listModel;
@@ -140,14 +139,14 @@ public class MainWindow implements Runnable {
         final JPanel spacer1 = new JPanel();
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.fill = GridBagConstraints.VERTICAL;
         settingsPagePanel.add(spacer1, gbc);
         aboutButton = new JButton();
         aboutButton.setText("About...");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         gbc.fill = GridBagConstraints.HORIZONTAL;
         settingsPagePanel.add(aboutButton, gbc);
         databaseFileTextField = new JTextField();
@@ -164,13 +163,20 @@ public class MainWindow implements Runnable {
         gbc.gridy = 1;
         gbc.fill = GridBagConstraints.VERTICAL;
         settingsPagePanel.add(spacer2, gbc);
-        saveDatabaseCheckbox = new JCheckBox();
-        saveDatabaseCheckbox.setText("Save database to disk");
+        useDatabaseCheckbox = new JCheckBox();
+        useDatabaseCheckbox.setText("Use database for indexes");
+        gbc = new GridBagConstraints();
+        gbc.gridx = 1;
+        gbc.gridy = 3;
+        gbc.anchor = GridBagConstraints.WEST;
+        settingsPagePanel.add(useDatabaseCheckbox, gbc);
+        saveSettingsOnExitCheckBox = new JCheckBox();
+        saveSettingsOnExitCheckBox.setText("Save settings on exit");
         gbc = new GridBagConstraints();
         gbc.gridx = 1;
         gbc.gridy = 2;
         gbc.anchor = GridBagConstraints.WEST;
-        settingsPagePanel.add(saveDatabaseCheckbox, gbc);
+        settingsPagePanel.add(saveSettingsOnExitCheckBox, gbc);
         toolbarPanel = new JPanel();
         toolbarPanel.setLayout(new BorderLayout(0, 0));
         topPanel.add(toolbarPanel, BorderLayout.SOUTH);
@@ -195,6 +201,7 @@ public class MainWindow implements Runnable {
      * Builder for MainWindow
      */
     public static class MainWindowBuilder {
+
         private class MainWindowSettings {
             DefaultListModel<String> listModel;
             Dimension windowDimensions;
@@ -202,6 +209,7 @@ public class MainWindow implements Runnable {
             boolean useDatabase;
             String databasePath;
         }
+
         MainWindowSettings settings = new MainWindowSettings();
 
         public MainWindowBuilder() {
@@ -255,6 +263,7 @@ public class MainWindow implements Runnable {
             settings = gson.fromJson(fr, MainWindowSettings.class);
             return this;
         }
+
         @Override
         public String toString() {
             Gson gson = new Gson();
@@ -271,7 +280,7 @@ public class MainWindow implements Runnable {
      * </p>
      */
     private MainWindow(MainWindowBuilder b) {
-        $$$setupUI$$$();              // This must be first
+        $$$setupUI$$$();        // This must be first
         constructMainWindow(b); // This must be second
         builderJsonString = b.toString();
         System.out.printf("JSON Builder: %s \n\n", builderJsonString);
@@ -318,8 +327,7 @@ public class MainWindow implements Runnable {
             @Override
             public void windowClosing(WindowEvent we) {
                 System.out.println("Saving and exiting...");
-                try
-                {
+                try {
                     FileWriter fw = new FileWriter("settings.json");
                     fw.write(builderJsonString);
                     fw.close();
@@ -337,6 +345,11 @@ public class MainWindow implements Runnable {
         // TODO: should we check the return value of $$$getRootComponent$$$() for NULL?
         mainFrame.setContentPane($$$getRootComponent$$$());
         mainFrame.setPreferredSize(windowDimensions);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
