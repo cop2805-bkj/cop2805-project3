@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -220,30 +222,57 @@ public class MainWindow implements Runnable {
             settings.databasePath = "";
         }
 
+        /**
+         * set the path that the database will be located at
+         *
+         * @param path
+         * @return
+         */
         public MainWindowBuilder
         setDatabasePath(String path) {
             settings.databasePath = path;
             return this;
         }
 
+        /**
+         * true or false if we should use a database
+         *
+         * @param b
+         * @return
+         */
         public MainWindowBuilder
         setUseDatabase(boolean b) {
             settings.useDatabase = b;
             return this;
         }
 
+        /**
+         * true or false if we should save when exiting
+         *
+         * @param b
+         * @return
+         */
         public MainWindowBuilder
         setSaveOnExit(boolean b) {
             settings.saveOnExit = b;
             return this;
         }
 
+        /**
+         * @param width  X value of dimension
+         * @param height Y value of dimension
+         * @return
+         */
         public MainWindowBuilder
         setWindowDimensions(int width, int height) {
             settings.windowDimensions.setSize(width, height);
             return this;
         }
 
+        /**
+         * @param files array containing file paths to open text files
+         * @return
+         */
         public MainWindowBuilder
         setOpenFiles(String[] files) {
             for (String f : files) {
@@ -252,11 +281,23 @@ public class MainWindow implements Runnable {
             return this;
         }
 
+        /**
+         * Terminates the builder and returns a configured MainWindow
+         *
+         * @return MainWindow
+         */
         public MainWindow
         build() {
             return new MainWindow(this);
         }
 
+
+        /**
+         * Method to use JSON input to construct a builder
+         *
+         * @param fr a FileReader to a settings.json file for this builder object
+         * @return
+         */
         public MainWindowBuilder
         builderFromJson(FileReader fr) {
             Gson gson = new Gson();
@@ -264,6 +305,9 @@ public class MainWindow implements Runnable {
             return this;
         }
 
+        /**
+         * @return JSON string of configurable settings
+         */
         @Override
         public String toString() {
             Gson gson = new Gson();
@@ -281,9 +325,36 @@ public class MainWindow implements Runnable {
      */
     private MainWindow(MainWindowBuilder b) {
         $$$setupUI$$$();        // This must be first
-        constructMainWindow(b); // This must be second
+        loadApplicationSettings(b); // This must be second
+
         builderJsonString = b.toString();
         System.out.printf("JSON Builder: %s \n\n", builderJsonString);
+
+        saveSettingsOnExitCheckBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                // checkbox checked
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    saveOnExit = true;
+                } else {    //checkbox has been unchecked
+                    saveOnExit = false;
+                }
+                ;
+            }
+        });
+
+        useDatabaseCheckbox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent e) {
+                // checked
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    useDatabase = true;
+                } else {    // unchecked
+                    useDatabase = false;
+                }
+                ;
+            }
+        });
 
         searchButton.addActionListener(actionEvent -> {
             NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
@@ -324,15 +395,14 @@ public class MainWindow implements Runnable {
         // and then call the original method
         mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainFrame.addWindowListener(new WindowAdapter() {
+
             @Override
             public void windowClosing(WindowEvent we) {
-                System.out.println("Saving and exiting...");
-                try {
-                    FileWriter fw = new FileWriter("settings.json");
-                    fw.write(builderJsonString);
-                    fw.close();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
+                if (saveOnExit) {
+                    System.out.println("Saving and exiting...");
+                    saveApplicationSettings();
+                } else {
+                    System.out.println("Saving without exiting...");
                 }
                 // This is how the Oracle doc's say to write a windowClosing event
                 // and without looking into the JDK source it seems that this is what the super
@@ -352,16 +422,50 @@ public class MainWindow implements Runnable {
         }
     }
 
+    private void saveApplicationSettings() {
+        MainWindowBuilder b = new MainWindow.MainWindowBuilder();
+        b.setDatabasePath(databasePath);
+
+        b.setSaveOnExit(saveOnExit);
+        b.setUseDatabase(useDatabase);
+
+        String[] openFileStrings = new String[listModel.size()];
+        for (int i = 0; i < listModel.size(); i++) {
+            openFileStrings[i] = listModel.get(i);
+        }
+        b.setOpenFiles(openFileStrings);
+
+        b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
+
+        File f = new File("settings.json");
+        if (f.exists() && f.canWrite()) {
+            f.delete();
+            try (FileWriter fw = new FileWriter(f)) {
+                System.out.printf("SAVING: %s", b.toString());
+                fw.write(b.toString());
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
     /**
      * constructs a MainWindow from a builder object
      *
      * @param b Builder object for mainWindow
      */
-    private void constructMainWindow(MainWindowBuilder b) {
+    private void loadApplicationSettings(MainWindowBuilder b) {
         this.windowDimensions = b.settings.windowDimensions;
         this.listModel = b.settings.listModel;
-        this.saveOnExit = b.settings.saveOnExit;
-        this.useDatabase = b.settings.useDatabase;
+
+        saveSettingsOnExitCheckBox.setSelected(b.settings.saveOnExit);
+        saveOnExit = b.settings.saveOnExit;
+
+        useDatabaseCheckbox.setSelected(b.settings.useDatabase);
+        useDatabase = b.settings.useDatabase;
+
         this.databasePath = b.settings.databasePath;
     }
 
