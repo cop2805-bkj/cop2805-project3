@@ -23,7 +23,7 @@ public class Main {
         } else {
             System.out.println("settings.json is missing! Using default settings!");
             javax.swing.SwingUtilities.invokeLater(
-                    new MainWindow.MainWindowBuilder().setWindowDimensions(400,400).build());
+                    new MainWindow.MainWindowBuilder().setWindowDimensions(500,650).build());
         }
 
     }

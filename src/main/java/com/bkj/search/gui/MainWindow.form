@@ -81,7 +81,7 @@
               </grid>
               <grid id="2f5ba" binding="filesListPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Files"/>
+                  <tabbedpane title="Indexed Files"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -99,10 +99,6 @@
                       </component>
                     </children>
                   </grid>
-                  <component id="f1bc5" class="javax.swing.JList" binding="searchFilesList" custom-create="true">
-                    <constraints border-constraint="Center"/>
-                    <properties/>
-                  </component>
                   <component id="a149e" class="javax.swing.JButton" binding="removeSelectedFileButton" default-binding="true">
                     <constraints border-constraint="South"/>
                     <properties>
@@ -110,6 +106,17 @@
                       <text value="Remove Selected File"/>
                     </properties>
                   </component>
+                  <scrollpane id="e7889">
+                    <constraints border-constraint="Center"/>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="c8e6" class="javax.swing.JTable" binding="indexedFilesTable" custom-create="true">
+                        <constraints/>
+                        <properties/>
+                      </component>
+                    </children>
+                  </scrollpane>
                 </children>
               </grid>
               <grid id="af41a" binding="settingsPagePanel" layout-manager="GridBagLayout">

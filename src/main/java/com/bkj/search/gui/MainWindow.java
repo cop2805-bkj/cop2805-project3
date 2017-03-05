@@ -3,6 +3,9 @@ package com.bkj.search.gui;
 import com.google.gson.Gson;
 
 import javax.swing.*;
+import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -12,6 +15,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @see Runnable
@@ -25,7 +32,6 @@ public class MainWindow implements Runnable {
     private JTable resultsTable;
     private JProgressBar progressBar1;
     private JButton chooseFilesButton;
-    private JList<String> searchFilesList;
     private JButton removeSelectedFileButton;
     private JButton selectDBButton;
     private JButton aboutButton;
@@ -40,9 +46,8 @@ public class MainWindow implements Runnable {
     private JPanel filesListPanel;
     private JPanel settingsPagePanel;
     private JCheckBox saveSettingsOnExitCheckBox;
-    private JCheckBox checkBox3;
+    private JTable indexedFilesTable;
 
-    private DefaultListModel<String> listModel;
     private JFileChooser searchFilesChooser;
     private JFrame mainFrame;
 
@@ -53,6 +58,9 @@ public class MainWindow implements Runnable {
             (T/F) should we save?
             where is the database located
      */
+
+    private Map<String, Date> indexedFilesMap;
+    private DefaultTableModel indexedFilesTableModel;
 
     private Dimension windowDimensions;
     private boolean saveOnExit;
@@ -108,18 +116,20 @@ public class MainWindow implements Runnable {
         scrollPane1.setViewportView(resultsTable);
         filesListPanel = new JPanel();
         filesListPanel.setLayout(new BorderLayout(0, 0));
-        tabbedPane1.addTab("Files", filesListPanel);
+        tabbedPane1.addTab("Indexed Files", filesListPanel);
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new BorderLayout(0, 0));
         filesListPanel.add(panel1, BorderLayout.NORTH);
         chooseFilesButton = new JButton();
         chooseFilesButton.setText("Choose Files...");
         panel1.add(chooseFilesButton, BorderLayout.CENTER);
-        filesListPanel.add(searchFilesList, BorderLayout.CENTER);
         removeSelectedFileButton = new JButton();
         removeSelectedFileButton.setHorizontalAlignment(0);
         removeSelectedFileButton.setText("Remove Selected File");
         filesListPanel.add(removeSelectedFileButton, BorderLayout.SOUTH);
+        final JScrollPane scrollPane2 = new JScrollPane();
+        filesListPanel.add(scrollPane2, BorderLayout.CENTER);
+        scrollPane2.setViewportView(indexedFilesTable);
         settingsPagePanel = new JPanel();
         settingsPagePanel.setLayout(new GridBagLayout());
         tabbedPane1.addTab("Settings", settingsPagePanel);
@@ -205,7 +215,8 @@ public class MainWindow implements Runnable {
     public static class MainWindowBuilder {
 
         private class MainWindowSettings {
-            DefaultListModel<String> listModel;
+            // TODO: Fix list -> table conversion
+            Map<String, Date> indexedFilesMap;
             Dimension windowDimensions;
             boolean saveOnExit;
             boolean useDatabase;
@@ -215,8 +226,8 @@ public class MainWindow implements Runnable {
         MainWindowSettings settings = new MainWindowSettings();
 
         public MainWindowBuilder() {
-            settings.listModel = new DefaultListModel<>();
-            settings.windowDimensions = new Dimension(600, 600);
+            settings.indexedFilesMap = new TreeMap<String, Date>();
+            settings.windowDimensions = new Dimension(500, 650);
             settings.saveOnExit = false;
             settings.useDatabase = false;
             settings.databasePath = "";
@@ -270,14 +281,12 @@ public class MainWindow implements Runnable {
         }
 
         /**
-         * @param files array containing file paths to open text files
+         * @param map HashMap of type String, Date
          * @return
          */
         public MainWindowBuilder
-        setOpenFiles(String[] files) {
-            for (String f : files) {
-                settings.listModel.addElement(f);
-            }
+        setOpenFiles(Map<String, Date> map) {
+            this.settings.indexedFilesMap = map;
             return this;
         }
 
@@ -366,20 +375,28 @@ public class MainWindow implements Runnable {
 
         aboutButton.addActionListener(actionEvent -> SwingUtilities.invokeLater(new AboutDialog()));
 
+        // Adds slected file to file table
         chooseFilesButton.addActionListener(actionEvent -> {
             int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
             if (fcRetVal == JFileChooser.APPROVE_OPTION) {
                 File file = searchFilesChooser.getSelectedFile();
                 //This is where a real application would open the file.
                 // TODO: Handle multiple files and recursive searching by selecting directories
-                listModel.addElement(file.toPath().toString());
+                indexedFilesMap.put(file.toPath().toString(), new Date(file.lastModified()));
+                indexedFilesTableModel.addRow(new Object[]{file.toPath().toString(), new Date(file.lastModified())});
             }
         });
 
-        // Removes selected file in file list
+        // Removes selected file in file table
         removeSelectedFileButton.addActionListener(actionEvent -> {
+            System.out.printf("Removing index: %d\n", indexedFilesTable.getSelectedRow());
             try {
-                listModel.remove(searchFilesList.getSelectedIndex());
+                int currentRow = indexedFilesTable.getSelectedRow();
+                String fileName = indexedFilesTable.getModel().getValueAt(currentRow, 0).toString();
+
+                indexedFilesMap.remove(fileName);
+                ((DefaultTableModel) indexedFilesTable.getModel()).removeRow(currentRow);
+
             } catch (ArrayIndexOutOfBoundsException aie) {
                 NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
             }
@@ -428,25 +445,19 @@ public class MainWindow implements Runnable {
 
         b.setSaveOnExit(saveOnExit);
         b.setUseDatabase(useDatabase);
-
-        String[] openFileStrings = new String[listModel.size()];
-        for (int i = 0; i < listModel.size(); i++) {
-            openFileStrings[i] = listModel.get(i);
-        }
-        b.setOpenFiles(openFileStrings);
+        b.setOpenFiles(indexedFilesMap);
 
         b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
 
         File f = new File("settings.json");
-        if (f.exists() && f.canWrite()) {
-            f.delete();
-            try (FileWriter fw = new FileWriter(f)) {
-                System.out.printf("SAVING: %s", b.toString());
-                fw.write(b.toString());
-                fw.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        if (f.exists() && f.canWrite()) f.delete();
+
+        try (FileWriter fw = new FileWriter(f)) {
+            System.out.printf("SAVING: %s", b.toString());
+            fw.write(b.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
     }
@@ -458,7 +469,12 @@ public class MainWindow implements Runnable {
      */
     private void loadApplicationSettings(MainWindowBuilder b) {
         this.windowDimensions = b.settings.windowDimensions;
-        this.listModel = b.settings.listModel;
+
+        this.indexedFilesMap = b.settings.indexedFilesMap;
+
+        for (Map.Entry<String, Date> e : this.indexedFilesMap.entrySet()) {
+            indexedFilesTableModel.addRow(new Object[]{e.getKey(), e.getValue()});
+        }
 
         saveSettingsOnExitCheckBox.setSelected(b.settings.saveOnExit);
         saveOnExit = b.settings.saveOnExit;
@@ -489,16 +505,15 @@ public class MainWindow implements Runnable {
      * </p>
      */
     private void createUIComponents() {
-        mainFrame = new JFrame("Search UI");
-        searchFilesChooser = new JFileChooser();
-
         // TODO: place custom component creation code here
         // Note that this is not the place for NEW components
         // It is only to setup components that have been marked custom
+        mainFrame = new JFrame("Search UI");
+        searchFilesChooser = new JFileChooser();
 
-        listModel = new DefaultListModel<String>();
-        searchFilesList = new JList<>(listModel);
-
+        indexedFilesMap = new HashMap<>();
+        indexedFilesTableModel = makeTableModel(indexedFilesMap);
+        indexedFilesTable = new JTable(indexedFilesTableModel);
 
         // This is just test data so the table shows up
         // everything here is subject to change
@@ -516,4 +531,13 @@ public class MainWindow implements Runnable {
         resultsTable = new JTable(data, columnNames);
     }
 
+    private DefaultTableModel makeTableModel(Map<String, Date> map) {
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"File Path", "Last Modified"}, 0
+        );
+        for (Map.Entry<String, Date> entry : map.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return model;
+    }
 }
