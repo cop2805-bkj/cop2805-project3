@@ -1,12 +1,30 @@
 import com.bkj.search.gui.MainWindow;
 
-/**
- * Created by bclaus on 2/7/17.
- */
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.*;
+
 // Displays UI
 public class Main {
     public static void main(String[] args){
         // In future versions we can handle different UI's for example from here
-        javax.swing.SwingUtilities.invokeLater(new MainWindow());
+        File f = new File("settings.json");
+        if(f.exists() && !f.isDirectory()) {
+            String jsonStr;
+            MainWindow mw;
+            try (FileReader fr = new FileReader(f)) {
+                System.out.println("Found settings.json file...reading saved settings");
+                mw = new MainWindow.MainWindowBuilder().builderFromJson(fr).build();
+                javax.swing.SwingUtilities.invokeLater(mw);
+            } catch (IOException ie) {
+                ie.printStackTrace();
+            }
+        } else {
+            System.out.println("settings.json is missing! Using default settings!");
+            javax.swing.SwingUtilities.invokeLater(
+                    new MainWindow.MainWindowBuilder().setWindowDimensions(400,400).build());
+        }
+
     }
 }
