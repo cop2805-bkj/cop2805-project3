@@ -468,11 +468,11 @@ public class MainWindow implements Runnable {
      * @param b Builder object for mainWindow
      */
     private void loadApplicationSettings(MainWindowBuilder b) {
-        this.windowDimensions = b.settings.windowDimensions;
+        windowDimensions = b.settings.windowDimensions;
 
-        this.indexedFilesMap = b.settings.indexedFilesMap;
+        indexedFilesMap = b.settings.indexedFilesMap;
 
-        for (Map.Entry<String, Date> e : this.indexedFilesMap.entrySet()) {
+        for (Map.Entry<String, Date> e : indexedFilesMap.entrySet()) {
             indexedFilesTableModel.addRow(new Object[]{e.getKey(), e.getValue()});
         }
 
