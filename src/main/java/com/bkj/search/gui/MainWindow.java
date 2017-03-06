@@ -3,9 +3,7 @@ package com.bkj.search.gui;
 import com.google.gson.Gson;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -46,7 +44,7 @@ public class MainWindow implements Runnable {
     private JPanel filesListPanel;
     private JPanel settingsPagePanel;
     private JCheckBox saveSettingsOnExitCheckBox;
-    private JTable indexedFilesTable;
+    private JTable openFilesTable;
 
     private JFileChooser searchFilesChooser;
     private JFrame mainFrame;
@@ -59,8 +57,8 @@ public class MainWindow implements Runnable {
             where is the database located
      */
 
-    private Map<String, Date> indexedFilesMap;
-    private DefaultTableModel indexedFilesTableModel;
+    private Map<String, Date> openFilesMap;
+    private DefaultTableModel openFilesTableModel;
 
     private Dimension windowDimensions;
     private boolean saveOnExit;
@@ -129,7 +127,7 @@ public class MainWindow implements Runnable {
         filesListPanel.add(removeSelectedFileButton, BorderLayout.SOUTH);
         final JScrollPane scrollPane2 = new JScrollPane();
         filesListPanel.add(scrollPane2, BorderLayout.CENTER);
-        scrollPane2.setViewportView(indexedFilesTable);
+        scrollPane2.setViewportView(openFilesTable);
         settingsPagePanel = new JPanel();
         settingsPagePanel.setLayout(new GridBagLayout());
         tabbedPane1.addTab("Settings", settingsPagePanel);
@@ -216,7 +214,7 @@ public class MainWindow implements Runnable {
 
         private class MainWindowSettings {
             // TODO: Fix list -> table conversion
-            Map<String, Date> indexedFilesMap;
+            Map<String, Date> openFilesMap;
             Dimension windowDimensions;
             boolean saveOnExit;
             boolean useDatabase;
@@ -226,7 +224,7 @@ public class MainWindow implements Runnable {
         MainWindowSettings settings = new MainWindowSettings();
 
         public MainWindowBuilder() {
-            settings.indexedFilesMap = new TreeMap<String, Date>();
+            settings.openFilesMap = new TreeMap<String, Date>();
             settings.windowDimensions = new Dimension(500, 650);
             settings.saveOnExit = false;
             settings.useDatabase = false;
@@ -286,7 +284,7 @@ public class MainWindow implements Runnable {
          */
         public MainWindowBuilder
         setOpenFiles(Map<String, Date> map) {
-            this.settings.indexedFilesMap = map;
+            this.settings.openFilesMap = map;
             return this;
         }
 
@@ -382,20 +380,20 @@ public class MainWindow implements Runnable {
                 File file = searchFilesChooser.getSelectedFile();
                 //This is where a real application would open the file.
                 // TODO: Handle multiple files and recursive searching by selecting directories
-                indexedFilesMap.put(file.toPath().toString(), new Date(file.lastModified()));
-                indexedFilesTableModel.addRow(new Object[]{file.toPath().toString(), new Date(file.lastModified())});
+                openFilesMap.put(file.toPath().toString(), new Date(file.lastModified()));
+                openFilesTableModel.addRow(new Object[]{file.toPath().toString(), new Date(file.lastModified())});
             }
         });
 
         // Removes selected file in file table
         removeSelectedFileButton.addActionListener(actionEvent -> {
-            System.out.printf("Removing index: %d\n", indexedFilesTable.getSelectedRow());
+            System.out.printf("Removing index: %d\n", openFilesTable.getSelectedRow());
             try {
-                int currentRow = indexedFilesTable.getSelectedRow();
-                String fileName = indexedFilesTable.getModel().getValueAt(currentRow, 0).toString();
+                int currentRow = openFilesTable.getSelectedRow();
+                String fileName = openFilesTable.getModel().getValueAt(currentRow, 0).toString();
 
-                indexedFilesMap.remove(fileName);
-                ((DefaultTableModel) indexedFilesTable.getModel()).removeRow(currentRow);
+                openFilesMap.remove(fileName);
+                ((DefaultTableModel) openFilesTable.getModel()).removeRow(currentRow);
 
             } catch (ArrayIndexOutOfBoundsException aie) {
                 NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
@@ -445,7 +443,7 @@ public class MainWindow implements Runnable {
 
         b.setSaveOnExit(saveOnExit);
         b.setUseDatabase(useDatabase);
-        b.setOpenFiles(indexedFilesMap);
+        b.setOpenFiles(openFilesMap);
 
         b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
 
@@ -470,10 +468,10 @@ public class MainWindow implements Runnable {
     private void loadApplicationSettings(MainWindowBuilder b) {
         windowDimensions = b.settings.windowDimensions;
 
-        indexedFilesMap = b.settings.indexedFilesMap;
+        openFilesMap = b.settings.openFilesMap;
 
-        for (Map.Entry<String, Date> e : indexedFilesMap.entrySet()) {
-            indexedFilesTableModel.addRow(new Object[]{e.getKey(), e.getValue()});
+        for (Map.Entry<String, Date> e : openFilesMap.entrySet()) {
+            openFilesTableModel.addRow(new Object[]{e.getKey(), e.getValue()});
         }
 
         saveSettingsOnExitCheckBox.setSelected(b.settings.saveOnExit);
@@ -511,9 +509,9 @@ public class MainWindow implements Runnable {
         mainFrame = new JFrame("Search UI");
         searchFilesChooser = new JFileChooser();
 
-        indexedFilesMap = new HashMap<>();
-        indexedFilesTableModel = makeTableModel(indexedFilesMap);
-        indexedFilesTable = new JTable(indexedFilesTableModel);
+        openFilesMap = new HashMap<>();
+        openFilesTableModel = makeTableModel(openFilesMap);
+        openFilesTable = new JTable(openFilesTableModel);
 
         // This is just test data so the table shows up
         // everything here is subject to change

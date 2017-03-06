@@ -111,7 +111,7 @@
                     <properties/>
                     <border type="none"/>
                     <children>
-                      <component id="c8e6" class="javax.swing.JTable" binding="indexedFilesTable" custom-create="true">
+                      <component id="c8e6" class="javax.swing.JTable" binding="openFilesTable" custom-create="true">
                         <constraints/>
                         <properties/>
                       </component>

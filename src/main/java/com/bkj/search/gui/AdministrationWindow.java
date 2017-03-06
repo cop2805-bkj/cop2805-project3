@@ -22,7 +22,7 @@ public class AdministrationWindow implements Runnable {
     /**
      * Creates a default Administration Window to manage index files
      */
-    public AdministrationWindow() {
+    public AdministrationWindow(String[] openFiles) {
         $$$setupUI$$$();
         closeFormButton.addActionListener(actionEvent -> mainFrame.dispose());
 
