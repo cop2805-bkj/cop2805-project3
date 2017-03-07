@@ -4,15 +4,11 @@ import com.bkj.search.utils.FileInvertedIndex;
 import com.google.gson.Gson;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.awt.event.*;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Map;
@@ -48,6 +44,7 @@ public class MainWindow implements Runnable {
     private JPanel settingsPagePanel;
     private JCheckBox saveSettingsOnExitCheckBox;
     private JTable openFilesTable;
+    private JButton importListButton;
     private JFileChooser searchFilesChooser;
 
     /*
@@ -65,6 +62,7 @@ public class MainWindow implements Runnable {
     private boolean useDatabase;
     private String databasePath;
 
+    // TODO: We will probably end up rebuilding the master index from scratch each time
     private ArrayList<FileInvertedIndex> indexedFiles;
 
     /**
@@ -120,14 +118,19 @@ public class MainWindow implements Runnable {
 
         // Adds slected file to file table
         chooseFilesButton.addActionListener(actionEvent -> {
+            searchFilesChooser.setFileFilter(new FileNameExtensionFilter("Plain Text Files", "txt"));
             int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
             if (fcRetVal == JFileChooser.APPROVE_OPTION) {
                 File file = searchFilesChooser.getSelectedFile();
-                //This is where a real application would open the file.
                 // TODO: Handle multiple files and recursive searching by selecting directories
                 openFilesMap.put(file.toPath().toString(), new Date(file.lastModified()));
                 openFilesTableModel.addRow(new Object[]{file.toPath().toString(), new Date(file.lastModified())});
             }
+        });
+
+        // Imports a list of files vs a single file at a time
+        importListButton.addActionListener(actionEvent -> {
+
         });
 
         // Removes selected file in file table
@@ -180,6 +183,7 @@ public class MainWindow implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     private void saveApplicationSettings() {
@@ -202,6 +206,8 @@ public class MainWindow implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        //TODO: Save indexedFiles List
 
     }
 
@@ -340,6 +346,9 @@ public class MainWindow implements Runnable {
         chooseFilesButton = new JButton();
         chooseFilesButton.setText("Choose Files...");
         panel1.add(chooseFilesButton, BorderLayout.CENTER);
+        importListButton = new JButton();
+        importListButton.setText("Import...");
+        panel1.add(importListButton, BorderLayout.EAST);
         removeSelectedFileButton = new JButton();
         removeSelectedFileButton.setHorizontalAlignment(0);
         removeSelectedFileButton.setText("Remove Selected File");

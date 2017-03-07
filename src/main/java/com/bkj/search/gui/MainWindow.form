@@ -97,6 +97,12 @@
                           <text value="Choose Files..."/>
                         </properties>
                       </component>
+                      <component id="a3c88" class="javax.swing.JButton" binding="importListButton">
+                        <constraints border-constraint="East"/>
+                        <properties>
+                          <text value="Import..."/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
                   <component id="a149e" class="javax.swing.JButton" binding="removeSelectedFileButton" default-binding="true">
