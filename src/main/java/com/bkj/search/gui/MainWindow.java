@@ -7,14 +7,16 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * @see Runnable
@@ -96,22 +98,14 @@ public class MainWindow implements Runnable {
 
         saveSettingsOnExitCheckBox.addItemListener(e -> {
             // checkbox checked
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                saveOnExit = true;
-            } else {    //checkbox has been unchecked
-                saveOnExit = false;
-            }
-            ;
+            //checkbox has been unchecked
+            saveOnExit = e.getStateChange() == ItemEvent.SELECTED;
         });
 
         useDatabaseCheckbox.addItemListener(e -> {
             // checked
-            if (e.getStateChange() == ItemEvent.SELECTED) {
-                useDatabase = true;
-            } else {    // unchecked
-                useDatabase = false;
-            }
-            ;
+            // unchecked
+            useDatabase = e.getStateChange() == ItemEvent.SELECTED;
         });
 
         searchButton.addActionListener(actionEvent -> {

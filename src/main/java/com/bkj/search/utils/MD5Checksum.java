@@ -53,6 +53,6 @@ public class MD5Checksum {
 
     @Override
     public String toString() {
-        return new String(path + " -> " + MD5Sum);
+        return path + " -> " + MD5Sum;
     }
 }
