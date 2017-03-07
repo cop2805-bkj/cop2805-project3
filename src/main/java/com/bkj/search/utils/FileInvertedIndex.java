@@ -1,27 +1,33 @@
 package com.bkj.search.utils;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import java.io.*;
+import java.util.*;
+
 /**
  * @see InvertedIndexEntry
  */
 public class FileInvertedIndex {
     public List<Pair<String, InvertedIndexEntry>> invertedIndex;
     private File fileBacking;
+    private String MD5Sum;
+    private Date lastModified;
 
-    public FileInvertedIndex(String file) {
+    public FileInvertedIndex(String file) throws FileNotFoundException {
         fileBacking = new File(file);
         invertedIndex = new ArrayList<>();
+        if(fileBacking.exists()) {
+            MD5Sum = MD5Checksum.getCheckSum(fileBacking);
+            lastModified = new Date(fileBacking.lastModified());
+        } else {
+            throw new FileNotFoundException();
+        }
+
     }
 
-    public String getFileString() {
+    public String getFilePathString() {
         return fileBacking.toString();
     }
+    public String getFileName() { return fileBacking.getName(); }
 
     /**
      * rebuilds the Inverted Index from scratch
@@ -84,10 +90,41 @@ public class FileInvertedIndex {
         return matchingEntries;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        // if they are exactly the same object then they are equal
+        if (this == o) return true;
+
+        // if the object passed in is null or not the same class as this
+        // then it is impossible for them to be equal
+        if (o == null || getClass() != o.getClass()) return false;
+
+        // while MD5 is not cryptographically secure, it provides us with a reasonable
+        // way to detect file changes or detect identical files
+        // Hash collisions are not a concern due to the fact we are using MD5 for checksuming
+        // and due to the speed of the MD5 algorithim compared to alternatives (SHA1/SHA256 etc)
+        FileInvertedIndex that = (FileInvertedIndex) o;
+        return Objects.equals(getMD5Sum(), that.getMD5Sum());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getMD5Sum());
+    }
+
     // This is here if it is required to retrieve the set
+    // Don't use this please
     @Deprecated
     public List<Pair<String, InvertedIndexEntry>>
     getSet(){
         return invertedIndex;
+    }
+
+    public String getMD5Sum() {
+        return MD5Sum;
+    }
+
+    public Date getLastModified() {
+        return lastModified;
     }
 }

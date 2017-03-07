@@ -1,23 +1,19 @@
 package com.bkj.search.utils;
 
 import java.io.File;
-import java.util.Date;
 
 /**
  * Created by bclaus on 3/6/17.
  */
 public class InvertedIndexEntry {
-    private final String filePath;
+    private final String fileName;
     private final long lineNumber;
-    private String MD5Sum;
-    private Date lastModified;
+
 
     public InvertedIndexEntry(File file, long lineNumber){
-        this.filePath = file.toString();
+        this.fileName = file.toString();
         this.lineNumber = lineNumber;
-        File f = new File(filePath);
-        MD5Sum = MD5Checksum.getCheckSum(f);
-        lastModified = new Date(f.lastModified());
+        File f = new File(fileName);
     }
 
     public InvertedIndexEntry(String filePath, long lineNumber) {
@@ -25,16 +21,11 @@ public class InvertedIndexEntry {
     }
 
     public String getFilePath() {
-        return filePath;
+        return fileName;
     }
 
     public long getLineNumber() {
         return lineNumber;
     }
 
-    public String getMD5Sum() {
-        return MD5Sum;
-    }
-
-    public Date getLastModified() { return lastModified; }
 }

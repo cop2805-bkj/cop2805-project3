@@ -5,6 +5,7 @@ import com.bkj.search.utils.FileInvertedIndex;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
@@ -27,7 +28,6 @@ public class AdministrationWindow implements Runnable {
     private JFrame mainFrame;
     private final MainWindow mw;
     private final TreeMap<String, Date> openFiles;
-    private TreeMap<String, Boolean> indexedFilesMap;
     private DefaultTableModel indexedFilesTableModel;
 
     /**
@@ -36,24 +36,22 @@ public class AdministrationWindow implements Runnable {
     public AdministrationWindow(MainWindow mw) {
         this.mw = mw;
         openFiles = mw.getOpenFiles();
-        indexedFilesMap = new TreeMap<>();
-        // we create the default state here, which is everything is *not* indexed
-        for (String file : openFiles.keySet()) {
-            indexedFilesMap.put(file, false);
-        }
         $$$setupUI$$$();
 
 
         closeFormButton.addActionListener(actionEvent -> mainFrame.dispose());
 
         addIndexButton.addActionListener(actionEvent -> {
-            // TODO: event handler for adding a index directly
+            // TODO: Should we include the ability to add indexes manually?
+            // It sounds like it would only break things without adding functionality
         });
         removeIndexButton.addActionListener(actionEvent -> {
-            // TODO: event handler for removing a index directly
+            // TODO: should we be able to remove indexed files?
+            // because so far the only way to add a file is by adding it to the MainWindow
         });
         updateIndexButton.addActionListener(actionEvent -> {
-            // TODO: event handler to force a update of a index from the backing file
+            int selectedIndex = indexedFilesTable.getSelectedRow();
+
         });
 
         mainFrame.setContentPane($$$getRootComponent$$$());
@@ -68,10 +66,16 @@ public class AdministrationWindow implements Runnable {
      */
     @Override
     public void run() {
+
+        // TODO: Best case, this should run is a seperate thread and fire a event when it is done
         if (openFiles.size() > 0) {
             System.out.printf("Opening %d files for indexing%n", openFiles.size());
             for (String s : openFiles.keySet()) {
-                mw.addIndexedFile(new FileInvertedIndex(s));
+                try {
+                    mw.addIndexedFile(new FileInvertedIndex(s));
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
 
             System.out.printf("Rebuilding %d indexes%n", mw.getIndexedFiles().size());
@@ -79,15 +83,15 @@ public class AdministrationWindow implements Runnable {
             long totalTimeMillis;
             for (FileInvertedIndex fii : mw.getIndexedFiles()) {
                 currentTimeMillis = System.currentTimeMillis();
-                System.out.printf("\t> Rebuilding %s...%n", fii.getFileString());
+                System.out.printf("\t> Rebuilding %s [MD5:%s]%n", fii.getFileName(), fii.getMD5Sum());
                 try {
                     fii.rebuildIndex();
                 } catch (IOException e) {
-                    System.out.printf("\t> !!!Failed to index %s!!!%n", fii.getFileString());
+                    System.out.printf("\t> !!!Failed to index %s!!!%n", fii.getFilePathString());
                     e.printStackTrace();
                 }
                 totalTimeMillis = System.currentTimeMillis() - currentTimeMillis;
-                System.out.printf("Indexed %s in %d Milliseconds%n", fii.getFileString(), totalTimeMillis);
+                System.out.printf("Indexed %s in %d Milliseconds%n", fii.getFilePathString(), totalTimeMillis);
             }
         }
         mainFrame.pack();
@@ -105,7 +109,11 @@ public class AdministrationWindow implements Runnable {
     private void createUIComponents() {
         // TODO: place custom component creation code here
         mainFrame = new JFrame("Index Administration");
-
+        TreeMap<String, Boolean> indexedFilesMap = new TreeMap<>();
+        // we create the default state here, which is everything is *not* indexed
+        for (String file : openFiles.keySet()) {
+            indexedFilesMap.put(file, false);
+        }
         indexedFilesTableModel = makeTableModel(indexedFilesMap);
         indexedFilesTable = new JTable(indexedFilesTableModel);
     }
