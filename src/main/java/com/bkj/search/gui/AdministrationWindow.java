@@ -8,6 +8,7 @@ import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -68,15 +69,22 @@ public class AdministrationWindow implements Runnable {
      */
     @Override
     public void run() {
-        System.out.printf("Opening %d files for indexing\n", openFiles.size());
-        for (String s : openFiles.keySet()) {
-            mw.addIndexedFile(new FileInvertedIndex(s));
-        }
+        if (openFiles.size() > 0) {
+            System.out.printf("Opening %d files for indexing\n", openFiles.size());
+            for (String s : openFiles.keySet()) {
+                mw.addIndexedFile(new FileInvertedIndex(s));
+            }
 
-        System.out.printf("Rebuilding %d indexes\n", mw.getIndexedFiles().size());
-        for (FileInvertedIndex fii : mw.getIndexedFiles()) {
-            System.out.printf("\t> Rebuilding %s...\n", fii.getFileString());
-            fii.rebuildIndex();
+            System.out.printf("Rebuilding %d indexes\n", mw.getIndexedFiles().size());
+            for (FileInvertedIndex fii : mw.getIndexedFiles()) {
+                System.out.printf("\t> Rebuilding %s...\n", fii.getFileString());
+                try {
+                    fii.rebuildIndex();
+                } catch (IOException e) {
+                    System.out.printf("%t> !!!Failed to index %s!!!", fii.getFileString());
+                    e.printStackTrace();
+                }
+            }
         }
         mainFrame.pack();
         mainFrame.setVisible(true);

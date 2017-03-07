@@ -23,8 +23,8 @@ public class FileInvertedIndex {
      * rebuilds the Inverted Index from scratch
      * @return True if successful, false if the method fails to rebuild the index
      */
-    public boolean
-    rebuildIndex() {
+    public void
+    rebuildIndex() throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(fileBacking))) {
             List<String> strings = new LinkedList<>();
             while(br.ready()) {
@@ -41,11 +41,10 @@ public class FileInvertedIndex {
                 lineCounter++;
             }
         } catch (IOException e) {
-            return false;
+            throw e;
         }
 
         //System.out.printf("Index for %s contains %d entries\n",fileBacking.toString(),invertedIndex.size());
-        return true;
     }
 
     /**
