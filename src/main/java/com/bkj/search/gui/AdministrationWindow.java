@@ -1,11 +1,18 @@
 package com.bkj.search.gui;
 
+import com.bkj.search.utils.FileInvertedIndex;
+import com.bkj.search.utils.InvertedIndexEntry;
+import com.bkj.search.utils.Pair;
+import com.sun.xml.internal.ws.api.streaming.XMLStreamReaderFactory;
+
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.util.*;
 
 /**
+ * @see Runnable
  * @since 0.1
- * @see java.lang.Runnable
  */
 public class AdministrationWindow implements Runnable {
     private JPanel topPanel;
@@ -18,12 +25,25 @@ public class AdministrationWindow implements Runnable {
     private JButton closeFormButton;
 
     private JFrame mainFrame;
+    private final MainWindow mw;
+    private final TreeMap<String, Date> openFiles;
+    private TreeMap<String, Boolean> indexedFilesMap;
+    private DefaultTableModel indexedFilesTableModel;
 
     /**
      * Creates a default Administration Window to manage index files
      */
-    public AdministrationWindow(String[] openFiles) {
+    public AdministrationWindow(MainWindow mw) {
+        this.mw = mw;
+        openFiles = mw.getOpenFiles();
+        indexedFilesMap = new TreeMap<>();
+        // we create the default state here, which is everything is *not* indexed
+        for (String file : openFiles.keySet()) {
+            indexedFilesMap.put(file, false);
+        }
         $$$setupUI$$$();
+
+
         closeFormButton.addActionListener(actionEvent -> mainFrame.dispose());
 
         addIndexButton.addActionListener(actionEvent -> {
@@ -38,15 +58,26 @@ public class AdministrationWindow implements Runnable {
 
         mainFrame.setContentPane($$$getRootComponent$$$());
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(400, 400));
+        mainFrame.setPreferredSize(new Dimension(850, 250));
     }
 
     /**
      * calls JDialog::pack and sets the dialog visible
-     * @see java.lang.Runnable
+     *
+     * @see Runnable
      */
     @Override
     public void run() {
+        System.out.printf("Opening %d files for indexing\n", openFiles.size());
+        for (String s : openFiles.keySet()) {
+            mw.addIndexedFile(new FileInvertedIndex(s));
+        }
+
+        System.out.printf("Rebuilding %d indexes\n", mw.getIndexedFiles().size());
+        for (FileInvertedIndex fii : mw.getIndexedFiles()) {
+            System.out.printf("\t> Rebuilding %s...\n", fii.getFileString());
+            fii.rebuildIndex();
+        }
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
@@ -54,27 +85,27 @@ public class AdministrationWindow implements Runnable {
     /**
      * For UI components marked 'Custom Create'
      * <p>
-     *     Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
-     *     this allows greater control over how objects are made instead of the default
-     *     parameter-less constructor
+     * Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
+     * this allows greater control over how objects are made instead of the default
+     * parameter-less constructor
      * </p>
      */
     private void createUIComponents() {
         // TODO: place custom component creation code here
         mainFrame = new JFrame("Index Administration");
 
-        String[] columnNames = {"File",
-                "Status"};
+        indexedFilesTableModel = makeTableModel(indexedFilesMap);
+        indexedFilesTable = new JTable(indexedFilesTableModel);
+    }
 
-        Object[][] data = {
-                {"testdata1.txt", "Indexed"},
-                {"testdata4.txt", "Indexed"},
-                {"testdata5.txt", "Out of Date"},
-                {"testdata11.txt", "Indexed"},
-                {"testdata15.txt", "Indexed"}
-        };
-
-        indexedFilesTable = new JTable(data, columnNames);
+    private DefaultTableModel makeTableModel(Map<String, Boolean> map) {
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"File", "Indexed?"}, 0
+        );
+        for (Map.Entry<String, Boolean> entry : map.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return model;
     }
 
     /**
@@ -140,13 +171,12 @@ public class AdministrationWindow implements Runnable {
         indexedFilesPanel = new JPanel();
         indexedFilesPanel.setLayout(new BorderLayout(0, 0));
         topPanel.add(indexedFilesPanel, BorderLayout.CENTER);
-        indexedFilesPanel.add(indexedFilesTable, BorderLayout.CENTER);
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new BorderLayout(0, 0));
-        topPanel.add(panel1, BorderLayout.SOUTH);
         closeFormButton = new JButton();
         closeFormButton.setText("Close");
-        panel1.add(closeFormButton, BorderLayout.CENTER);
+        indexedFilesPanel.add(closeFormButton, BorderLayout.SOUTH);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        indexedFilesPanel.add(scrollPane1, BorderLayout.CENTER);
+        scrollPane1.setViewportView(indexedFilesTable);
     }
 
     /**

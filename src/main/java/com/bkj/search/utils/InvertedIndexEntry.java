@@ -6,13 +6,13 @@ import java.util.Date;
 /**
  * Created by bclaus on 3/6/17.
  */
-public class IndexEntry {
+public class InvertedIndexEntry {
     private final String filePath;
     private final long lineNumber;
     private String MD5Sum;
     private Date lastModified;
 
-    public IndexEntry(File file, long lineNumber){
+    public InvertedIndexEntry(File file, long lineNumber){
         this.filePath = file.toString();
         this.lineNumber = lineNumber;
         File f = new File(filePath);
@@ -20,7 +20,7 @@ public class IndexEntry {
         lastModified = new Date(f.lastModified());
     }
 
-    public IndexEntry(String filePath, long lineNumber) {
+    public InvertedIndexEntry(String filePath, long lineNumber) {
         this(new File(filePath), lineNumber);
     }
 
