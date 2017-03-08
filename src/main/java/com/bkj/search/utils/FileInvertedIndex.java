@@ -90,6 +90,8 @@ public class FileInvertedIndex {
         return matchingEntries;
     }
 
+
+    // TODO: Change MD5 checksuming for equals method -> will not work with MD5
     @Override
     public boolean equals(Object o) {
         // if they are exactly the same object then they are equal

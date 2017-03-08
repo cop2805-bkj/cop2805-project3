@@ -189,19 +189,29 @@ public class MainWindow implements Runnable {
 
         b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
 
-        File f = new File("settings.json");
-        if (f.exists() && f.canWrite()) f.delete();
+        File settingsFile = new File("settings.json");
+        if (settingsFile.exists() && settingsFile.canWrite()) settingsFile.delete();
 
-        try (FileWriter fw = new FileWriter(f)) {
-            System.out.printf("SAVING: %s", b.toString());
+        try (FileWriter fw = new FileWriter(settingsFile)) {
+            System.out.printf("SAVING: %s%n", b.toString());
             fw.write(b.toString());
             fw.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        //TODO: Save indexedFiles List
 
+        //TODO: Save indexedFiles List
+        File indexFile = new File("InvertedIndex.json");
+        if (indexFile.exists() && indexFile.canWrite()) indexFile.delete();
+        Gson gson = new Gson();
+        try (FileWriter fw = new FileWriter(indexFile)) {
+            System.out.printf("WRITING INDEX TO DISK%n");
+            fw.write(gson.toJson(indexedFiles));
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
