@@ -19,8 +19,6 @@ import java.util.TreeMap;
  * @since 0.1
  */
 public class MainWindow implements Runnable {
-    // Store the JSON representation of the builder settings for debug
-    // and to easily write it to disk.
     private final String builderJsonString;
     private JPanel topPanel;
     private JButton searchButton;
@@ -275,6 +273,11 @@ public class MainWindow implements Runnable {
         resultsTable = new JTable(data, columnNames);
     }
 
+    /**
+     * Makes a sutible DefaultTableModel for a JTable from a Map
+     * @param map
+     * @return
+     */
     private DefaultTableModel makeTableModel(Map<String, Date> map) {
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"File Path", "Last Modified"}, 0

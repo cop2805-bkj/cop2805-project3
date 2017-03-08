@@ -5,7 +5,7 @@ import java.io.File;
 /**
  * Created by bclaus on 3/6/17.
  */
-public class InvertedIndexEntry {
+public class InvertedIndexEntry implements IInvertedIndexEntry {
     private final String fileName;
     private final long lineNumber;
 
@@ -20,10 +20,12 @@ public class InvertedIndexEntry {
         this(new File(filePath), lineNumber);
     }
 
+    @Override
     public String getFilePath() {
         return fileName;
     }
 
+    @Override
     public long getLineNumber() {
         return lineNumber;
     }

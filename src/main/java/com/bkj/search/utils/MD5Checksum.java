@@ -8,7 +8,7 @@ import java.io.IOException;
 /**
  * Provides a wrapper around generating MD5 sums from files
  */
-public class MD5Checksum {
+public class MD5Checksum implements IMD5Checksum {
     private String MD5Sum;
     private String path;
 
@@ -25,30 +25,7 @@ public class MD5Checksum {
         path = f.toString();
     }
 
-    /**
-     * This method should be used when you don't care about storing the result
-     * @param f File object for a file to generate a checksum
-     * @return String containing the MD5 checksum of the file
-     */
-    public static String getCheckSum(File f) {
-        String MD5Sum = null;
-        try (FileInputStream fis = new FileInputStream(f))
-        {
-            MD5Sum = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
-
-        } catch (FileNotFoundException e) {
-            System.out.printf("Could not find file %s\n", f.toString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (MD5Sum == null) {
-                MD5Sum = "NULL";
-            }
-        }
-
-        return MD5Sum;
-    }
-
+    @Override
     public String get() { return MD5Sum; }
 
     @Override

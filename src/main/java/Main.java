@@ -7,7 +7,6 @@ import java.io.IOException;
 // Displays UI
 public class Main {
     public static void main(String[] args){
-        // In future versions we can handle different UI's for example from here
         File f = new File("settings.json");
         if(f.exists() && !f.isDirectory()) {
             String jsonStr;
