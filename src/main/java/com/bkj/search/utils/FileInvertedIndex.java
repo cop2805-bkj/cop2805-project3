@@ -9,6 +9,7 @@ import static com.bkj.search.utils.IMD5Checksum.getCheckSum;
  * @see InvertedIndexEntry
  */
 public class FileInvertedIndex implements IFileInvertedIndex {
+
     public List<Pair<String, InvertedIndexEntry>> invertedIndex;
     private File fileBacking;
     private String MD5Sum;

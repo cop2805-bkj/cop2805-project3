@@ -13,7 +13,7 @@ public class Main {
             MainWindow mw;
             try (FileReader fr = new FileReader(f)) {
                 System.out.println("Found settings.json file...reading saved settings");
-                mw = new MainWindow.MainWindowBuilder().builderFromJson(fr).build();
+                mw = new MainWindow.MainWindowBuilder().makeFromJson(fr).build();
                 javax.swing.SwingUtilities.invokeLater(mw);
             } catch (IOException ie) {
                 ie.printStackTrace();
