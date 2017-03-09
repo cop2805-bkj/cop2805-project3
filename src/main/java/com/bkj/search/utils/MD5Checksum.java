@@ -12,13 +12,13 @@ public class MD5Checksum implements IMD5Checksum {
     private String MD5Sum;
     private String path;
 
-    MD5Checksum(String filePath) {
+    MD5Checksum(String filePath) throws IOException {
         this(new File(filePath));
     }
 
-    MD5Checksum(File f) {
+    MD5Checksum(File f) throws IOException {
         if(f.exists() && f.canRead()) {
-            MD5Sum = getCheckSum(f);
+            MD5Sum = IMD5Checksum.getCheckSum(f);
         } else {
             MD5Sum = "NULL";
         }

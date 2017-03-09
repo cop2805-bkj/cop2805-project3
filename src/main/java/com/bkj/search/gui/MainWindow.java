@@ -1,25 +1,25 @@
 package com.bkj.search.gui;
 
 import com.bkj.search.utils.FileInvertedIndex;
+import com.bkj.search.utils.IFileStore;
+import com.bkj.search.utils.ILoadable;
+import com.bkj.search.utils.ISaveable;
 import com.google.gson.Gson;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.List;
 import java.awt.event.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @see Runnable
  * @since 0.1
  */
-public class MainWindow implements Runnable {
-    private final String builderJsonString;
+public class MainWindow implements Runnable, IFileStore, ISaveable, ILoadable {
     private JPanel topPanel;
     private JButton searchButton;
     private JTextField searchTextField;
@@ -53,15 +53,15 @@ public class MainWindow implements Runnable {
             where is the database located
      */
     private JFrame mainFrame;
-    private TreeMap<String, Date> openFilesMap;
+    private Map<String, Date> openFilesMap;
     private DefaultTableModel openFilesTableModel;
     private Dimension windowDimensions;
     private boolean saveOnExit;
     private boolean useDatabase;
     private String databasePath;
-
+    private final String builderJsonString;
     // TODO: We will probably end up rebuilding the master index from scratch each time
-    private ArrayList<FileInvertedIndex> indexedFiles;
+    private java.util.List indexedFiles;
 
     /**
      * calls JDialog::pack and sets the dialog visible
@@ -74,7 +74,8 @@ public class MainWindow implements Runnable {
         mainFrame.setVisible(true);
     }
 
-    public TreeMap<String, Date> getOpenFiles() {
+    @Override
+    public Map<String, Date> getOpenFiles() {
         return openFilesMap;
     }
 
@@ -87,7 +88,7 @@ public class MainWindow implements Runnable {
      */
     private MainWindow(MainWindowBuilder b) {
         $$$setupUI$$$();        // This must be first
-        loadApplicationSettings(b); // This must be second
+        loadFromJson(b); // This must be second
 
         builderJsonString = b.toString();
         System.out.printf("JSON Builder: %s \n\n", builderJsonString);
@@ -157,7 +158,7 @@ public class MainWindow implements Runnable {
             public void windowClosing(WindowEvent we) {
                 if (saveOnExit) {
                     System.out.println("Saving and exiting...");
-                    saveApplicationSettings();
+                    saveToJson();
                 } else {
                     System.out.println("Saving without exiting...");
                 }
@@ -177,7 +178,8 @@ public class MainWindow implements Runnable {
 
     }
 
-    private void saveApplicationSettings() {
+    @Override
+    public void saveToJson() {
         MainWindowBuilder b = new MainWindow.MainWindowBuilder();
         b.setDatabasePath(databasePath);
 
@@ -217,7 +219,7 @@ public class MainWindow implements Runnable {
      *
      * @param b Builder object for mainWindow
      */
-    private void loadApplicationSettings(MainWindowBuilder b) {
+    public void loadFromJson(MainWindowBuilder b) {
         windowDimensions = b.settings.windowDimensions;
 
         openFilesMap = b.settings.openFilesMap;
@@ -235,7 +237,7 @@ public class MainWindow implements Runnable {
         this.databasePath = b.settings.databasePath;
 
         // TODO: Load indexed files
-        indexedFiles = new ArrayList<>();
+        indexedFiles = new ArrayList<FileInvertedIndex>();
     }
 
     /**
@@ -288,18 +290,35 @@ public class MainWindow implements Runnable {
         return model;
     }
 
-    public ArrayList<FileInvertedIndex> getIndexedFiles() {
+    /**
+     * Returns a List of the currently indexed files
+     * @return List of indexed files
+     */
+    @Override
+    public java.util.List<FileInvertedIndex> getIndexedFiles() {
         return indexedFiles;
     }
 
-    public void setIndexedFiles(ArrayList<FileInvertedIndex> indexedFiles) {
+
+    /**
+     * Change the indexedFiles List to a different list
+     * @param indexedFiles A List of indexed files
+     */
+    @Override
+    public void setIndexedFiles(java.util.List<FileInvertedIndex> indexedFiles) {
         this.indexedFiles = indexedFiles;
     }
 
+    /**
+     * Adds a Inverted Index to the index list
+     * @param fii a Single FileInvertedIndex to add to the list
+     */
+    @Override
     public void addIndexedFile(FileInvertedIndex fii) {
         this.indexedFiles.add(fii);
     }
 
+    @Override
     public void removeIndexedFile(int i) { this.indexedFiles.remove(i); }
 
     /**
@@ -510,7 +529,7 @@ public class MainWindow implements Runnable {
          * @return
          */
         public MainWindowBuilder
-        setOpenFiles(TreeMap<String, Date> map) {
+        setOpenFiles(Map<String, Date> map) {
             this.settings.openFilesMap = map;
             return this;
         }
@@ -548,7 +567,7 @@ public class MainWindow implements Runnable {
         }
 
         private class MainWindowSettings {
-            TreeMap<String, Date> openFilesMap;
+            Map<String, Date> openFilesMap;
             Dimension windowDimensions;
             boolean saveOnExit;
             boolean useDatabase;

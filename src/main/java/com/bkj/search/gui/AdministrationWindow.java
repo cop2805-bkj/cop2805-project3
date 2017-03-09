@@ -27,7 +27,7 @@ public class AdministrationWindow implements Runnable {
 
     private JFrame mainFrame;
     private final MainWindow mw;
-    private final TreeMap<String, Date> openFiles;
+    private final Map<String, Date> openFiles;
     private DefaultTableModel indexedFilesTableModel;
 
     /**
@@ -73,7 +73,7 @@ public class AdministrationWindow implements Runnable {
             for (String s : openFiles.keySet()) {
                 try {
                     mw.addIndexedFile(new FileInvertedIndex(s));
-                } catch (FileNotFoundException e) {
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
