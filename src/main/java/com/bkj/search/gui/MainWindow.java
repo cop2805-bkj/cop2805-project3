@@ -1,30 +1,25 @@
 package com.bkj.search.gui;
 
+import com.bkj.search.utils.*;
 import com.google.gson.Gson;
 
 import javax.swing.*;
-import javax.swing.table.AbstractTableModel;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableModel;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.awt.event.*;
+import java.io.*;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * @see Runnable
  * @since 0.1
  */
-public class MainWindow implements Runnable {
+public class MainWindow implements Runnable, Saveable, Loadable<MainWindow.MainWindowBuilder> {
     private JPanel topPanel;
     private JButton searchButton;
     private JTextField searchTextField;
@@ -46,30 +41,231 @@ public class MainWindow implements Runnable {
     private JPanel filesListPanel;
     private JPanel settingsPagePanel;
     private JCheckBox saveSettingsOnExitCheckBox;
-    private JTable indexedFilesTable;
-
+    private JTable openFilesTable;
+    private JButton importListButton;
     private JFileChooser searchFilesChooser;
+
     private JFrame mainFrame;
-
-    /*
-        Settable settings.
-            Window dimensions
-            Open Files
-            (T/F) should we save?
-            where is the database located
-     */
-
-    private Map<String, Date> indexedFilesMap;
-    private DefaultTableModel indexedFilesTableModel;
+    private DefaultTableModel openFilesTableModel;
 
     private Dimension windowDimensions;
     private boolean saveOnExit;
     private boolean useDatabase;
     private String databasePath;
-
-    // Store the JSON representation of the builder settings for debug
-    // and to easily write it to disk.
     private final String builderJsonString;
+
+    public SearchUIModel dataModel;
+
+    /**
+     * calls JDialog::pack and sets the dialog visible
+     *
+     * @see Runnable
+     */
+    @Override
+    public void run() {
+        mainFrame.pack();
+        mainFrame.setVisible(true);
+    }
+
+    /**
+     * creates a new main window frame along with content
+     * <p>
+     * Calls IntelliJ 'entry point' $$$setupUI$$$() and creates actionEvents for buttons
+     * UI components
+     * </p>
+     */
+    private MainWindow(MainWindowBuilder b, SearchUIModel dm) {
+        this.dataModel = dm;
+        $$$setupUI$$$();        // This must be first
+        loadFromJson(b);        // This must be second
+
+        builderJsonString = b.toString();
+        System.out.printf("JSON Builder: %s \n\n", builderJsonString);
+
+        saveSettingsOnExitCheckBox.addItemListener(e -> {
+            saveOnExit = (e.getStateChange() == ItemEvent.SELECTED);
+        });
+
+        useDatabaseCheckbox.addItemListener(e -> {
+            useDatabase = (e.getStateChange() == ItemEvent.SELECTED);
+        });
+
+        searchButton.addActionListener(actionEvent -> {
+            //TODO: implement searching
+        });
+
+        selectDBButton.addActionListener(actionEvent -> {
+            //TODO: implement database ability
+        });
+
+        aboutButton.addActionListener(actionEvent -> SwingUtilities.invokeLater(new AboutDialog()));
+
+        // Adds slected file to file table
+        chooseFilesButton.addActionListener(actionEvent -> {
+            searchFilesChooser.setFileFilter(new FileNameExtensionFilter("Plain Text Files", "txt"));
+            int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
+            if (fcRetVal == JFileChooser.APPROVE_OPTION) {
+                File file = searchFilesChooser.getSelectedFile();
+                // TODO: Handle multiple files and recursive searching by selecting directories
+                dataModel.getOpenFiles().add(file.toString());
+
+
+                Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String dateString = formatter.format(new Date(file.lastModified()));
+
+                openFilesTableModel.addRow(new Object[]{file.getName(), dateString});
+            }
+        });
+
+        // Imports a list of files vs a single file at a time
+        importListButton.addActionListener(actionEvent -> {
+            //TODO: implement the ability to import a file list
+        });
+
+        // Removes selected file in file table
+        removeSelectedFileButton.addActionListener(actionEvent -> {
+            System.out.printf("Removing index: %d\n", openFilesTable.getSelectedRow());
+            try {
+                int currentRow = openFilesTable.getSelectedRow();
+                String fileName = openFilesTable.getModel().getValueAt(currentRow, 0).toString();
+
+                dataModel.getOpenFiles().remove(fileName);
+                ((DefaultTableModel) openFilesTable.getModel()).removeRow(currentRow);
+
+            } catch (ArrayIndexOutOfBoundsException aie) {
+                NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
+            }
+        });
+
+        // Opens Admin Page
+        adminPageButton.addActionListener(actionEvent -> {
+            AdministrationWindow win = new AdministrationWindow(this);
+            SwingUtilities.invokeLater(win);
+        });
+
+        // So we can implement save on exit we override and insert our save function
+        // and then call the original method
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        mainFrame.addWindowListener(new WindowAdapter() {
+
+            @Override
+            public void windowClosing(WindowEvent we) {
+                if (saveOnExit) {
+                    System.out.println("Saving and exiting...");
+                    saveToJson();
+                } else {
+                    System.out.println("Saving without exiting...");
+                }
+                mainFrame.dispose();
+            }
+        });
+
+        // The last thing we do is set the content panel and some frame specifics
+        // TODO: should we check the return value of $$$getRootComponent$$$() for NULL?
+        mainFrame.setContentPane($$$getRootComponent$$$());
+        mainFrame.setPreferredSize(windowDimensions);
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Override
+    public void saveToJson() {
+        MainWindowBuilder b = new MainWindow.MainWindowBuilder();
+        b.setDatabasePath(databasePath);
+
+        b.setSaveOnExit(saveOnExit);
+        b.setUseDatabase(useDatabase);
+
+        b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
+
+        File settingsFile = new File("settings.json");
+        if (settingsFile.exists() && settingsFile.canWrite()) settingsFile.delete();
+
+        try (FileWriter fw = new FileWriter(settingsFile)) {
+            System.out.printf("SAVING: %s%n", b.toString());
+            fw.write(b.toString());
+            fw.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        dataModel.saveToJson();
+    }
+
+    /**
+     * constructs a MainWindow from a builder object
+     *
+     * @param b Builder object for mainWindow
+     */
+    @Override
+    public void loadFromJson(MainWindowBuilder b) {
+
+        windowDimensions = b.settings.windowDimensions;
+
+        saveSettingsOnExitCheckBox.setSelected(b.settings.saveOnExit);
+        saveOnExit = b.settings.saveOnExit;
+
+        useDatabaseCheckbox.setSelected(b.settings.useDatabase);
+        useDatabase = b.settings.useDatabase;
+
+        this.databasePath = b.settings.databasePath;
+    }
+
+    /**
+     * For UI components marked 'Custom Create'
+     * <p>
+     * Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
+     * this allows greater control over how objects are made instead of the default
+     * parameter-less constructor
+     * </p>
+     */
+    private void createUIComponents() {
+        // TODO: place custom component creation code here
+        // Note that this is not the place for NEW components
+        // It is only to setup components that have been marked custom
+        mainFrame = new JFrame("Search UI");
+        searchFilesChooser = new JFileChooser();
+
+        openFilesTableModel = makeTableModel(dataModel.getOpenFiles());
+        openFilesTable = new JTable(openFilesTableModel);
+
+        // This is just test data so the table shows up
+        // everything here is subject to change
+        String[] columnNames = {"File",
+                "Line Number"};
+
+        Object[][] data = {
+                {"testdata1.txt", "23"},
+                {"testdata4.txt", "107"},
+                {"testdata5.txt", "8"},
+                {"testdata11.txt", "34"},
+                {"testdata15.txt", "20"}
+        };
+
+        resultsTable = new JTable(data, columnNames);
+    }
+
+    /**
+     * Makes a sutible DefaultTableModel for a JTable from a Map
+     *
+     * @param files A list containing path's to files
+     * @return
+     */
+    private DefaultTableModel makeTableModel(List<String> files) {
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"File Name", "Last Modified"}, 0
+        );
+        for (String s : files) {
+            File f = new File(s);
+            if (f.exists())
+                model.addRow(new Object[]{f.getName(), f.lastModified()});
+        }
+        return model;
+    }
 
     /**
      * Method generated by IntelliJ IDEA GUI Designer
@@ -123,13 +319,16 @@ public class MainWindow implements Runnable {
         chooseFilesButton = new JButton();
         chooseFilesButton.setText("Choose Files...");
         panel1.add(chooseFilesButton, BorderLayout.CENTER);
+        importListButton = new JButton();
+        importListButton.setText("Import...");
+        panel1.add(importListButton, BorderLayout.EAST);
         removeSelectedFileButton = new JButton();
         removeSelectedFileButton.setHorizontalAlignment(0);
         removeSelectedFileButton.setText("Remove Selected File");
         filesListPanel.add(removeSelectedFileButton, BorderLayout.SOUTH);
         final JScrollPane scrollPane2 = new JScrollPane();
         filesListPanel.add(scrollPane2, BorderLayout.CENTER);
-        scrollPane2.setViewportView(indexedFilesTable);
+        scrollPane2.setViewportView(openFilesTable);
         settingsPagePanel = new JPanel();
         settingsPagePanel.setLayout(new GridBagLayout());
         tabbedPane1.addTab("Settings", settingsPagePanel);
@@ -209,24 +408,15 @@ public class MainWindow implements Runnable {
         return topPanel;
     }
 
+
     /**
      * Builder for MainWindow
      */
-    public static class MainWindowBuilder {
-
-        private class MainWindowSettings {
-            // TODO: Fix list -> table conversion
-            Map<String, Date> indexedFilesMap;
-            Dimension windowDimensions;
-            boolean saveOnExit;
-            boolean useDatabase;
-            String databasePath;
-        }
+    public static class MainWindowBuilder implements IBuildable<MainWindow, MainWindowBuilder> {
 
         MainWindowSettings settings = new MainWindowSettings();
 
         public MainWindowBuilder() {
-            settings.indexedFilesMap = new TreeMap<String, Date>();
             settings.windowDimensions = new Dimension(500, 650);
             settings.saveOnExit = false;
             settings.useDatabase = false;
@@ -281,25 +471,23 @@ public class MainWindow implements Runnable {
         }
 
         /**
-         * @param map HashMap of type String, Date
-         * @return
-         */
-        public MainWindowBuilder
-        setOpenFiles(Map<String, Date> map) {
-            this.settings.indexedFilesMap = map;
-            return this;
-        }
-
-        /**
          * Terminates the builder and returns a configured MainWindow
          *
          * @return MainWindow
          */
         public MainWindow
         build() {
-            return new MainWindow(this);
-        }
+            FileReader fr = null;
+            SearchUIModel dm = null;
+            try {
+                fr = new FileReader("model.json");
+                dm = new SearchUIModel.SearchUIModelBuilder().makeFromJson(fr).build();
+            } catch (FileNotFoundException e) {
+                dm = new SearchUIModel.SearchUIModelBuilder().build();
+            }
 
+            return new MainWindow(this, dm);
+        }
 
         /**
          * Method to use JSON input to construct a builder
@@ -308,7 +496,7 @@ public class MainWindow implements Runnable {
          * @return
          */
         public MainWindowBuilder
-        builderFromJson(FileReader fr) {
+        makeFromJson(FileReader fr) {
             Gson gson = new Gson();
             settings = gson.fromJson(fr, MainWindowSettings.class);
             return this;
@@ -323,221 +511,13 @@ public class MainWindow implements Runnable {
             return gson.toJson(settings);
         }
 
-    }
-
-    /**
-     * creates a new main window frame along with content
-     * <p>
-     * Calls IntelliJ 'entry point' $$$setupUI$$$() and creates actionEvents for buttons
-     * UI components
-     * </p>
-     */
-    private MainWindow(MainWindowBuilder b) {
-        $$$setupUI$$$();        // This must be first
-        loadApplicationSettings(b); // This must be second
-
-        builderJsonString = b.toString();
-        System.out.printf("JSON Builder: %s \n\n", builderJsonString);
-
-        saveSettingsOnExitCheckBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                // checkbox checked
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    saveOnExit = true;
-                } else {    //checkbox has been unchecked
-                    saveOnExit = false;
-                }
-                ;
-            }
-        });
-
-        useDatabaseCheckbox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                // checked
-                if (e.getStateChange() == ItemEvent.SELECTED) {
-                    useDatabase = true;
-                } else {    // unchecked
-                    useDatabase = false;
-                }
-                ;
-            }
-        });
-
-        searchButton.addActionListener(actionEvent -> {
-            NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
-        });
-
-        selectDBButton.addActionListener(actionEvent -> {
-            NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Database path does not work yet");
-        });
-
-        aboutButton.addActionListener(actionEvent -> SwingUtilities.invokeLater(new AboutDialog()));
-
-        // Adds slected file to file table
-        chooseFilesButton.addActionListener(actionEvent -> {
-            int fcRetVal = searchFilesChooser.showOpenDialog(topPanel);
-            if (fcRetVal == JFileChooser.APPROVE_OPTION) {
-                File file = searchFilesChooser.getSelectedFile();
-                //This is where a real application would open the file.
-                // TODO: Handle multiple files and recursive searching by selecting directories
-                indexedFilesMap.put(file.toPath().toString(), new Date(file.lastModified()));
-                indexedFilesTableModel.addRow(new Object[]{file.toPath().toString(), new Date(file.lastModified())});
-            }
-        });
-
-        // Removes selected file in file table
-        removeSelectedFileButton.addActionListener(actionEvent -> {
-            System.out.printf("Removing index: %d\n", indexedFilesTable.getSelectedRow());
-            try {
-                int currentRow = indexedFilesTable.getSelectedRow();
-                String fileName = indexedFilesTable.getModel().getValueAt(currentRow, 0).toString();
-
-                indexedFilesMap.remove(fileName);
-                ((DefaultTableModel) indexedFilesTable.getModel()).removeRow(currentRow);
-
-            } catch (ArrayIndexOutOfBoundsException aie) {
-                NotImplementedDialog d = new NotImplementedDialog("Whoops!", "Select a file to remove");
-            }
-        });
-
-        // Opens Admin Page
-        adminPageButton.addActionListener(actionEvent -> {
-            AdministrationWindow win = new AdministrationWindow();
-            SwingUtilities.invokeLater(win);
-        });
-
-        // So we can implement save on exit we override and insert our save function
-        // and then call the original method
-        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        mainFrame.addWindowListener(new WindowAdapter() {
-
-            @Override
-            public void windowClosing(WindowEvent we) {
-                if (saveOnExit) {
-                    System.out.println("Saving and exiting...");
-                    saveApplicationSettings();
-                } else {
-                    System.out.println("Saving without exiting...");
-                }
-                // This is how the Oracle doc's say to write a windowClosing event
-                // and without looking into the JDK source it seems that this is what the super
-                // method does anyways.
-                System.exit(0);
-            }
-        });
-
-        // The last thing we do is set the content panel and some frame specifics
-        // TODO: should we check the return value of $$$getRootComponent$$$() for NULL?
-        mainFrame.setContentPane($$$getRootComponent$$$());
-        mainFrame.setPreferredSize(windowDimensions);
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void saveApplicationSettings() {
-        MainWindowBuilder b = new MainWindow.MainWindowBuilder();
-        b.setDatabasePath(databasePath);
-
-        b.setSaveOnExit(saveOnExit);
-        b.setUseDatabase(useDatabase);
-        b.setOpenFiles(indexedFilesMap);
-
-        b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
-
-        File f = new File("settings.json");
-        if (f.exists() && f.canWrite()) f.delete();
-
-        try (FileWriter fw = new FileWriter(f)) {
-            System.out.printf("SAVING: %s", b.toString());
-            fw.write(b.toString());
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        private class MainWindowSettings {
+            Dimension windowDimensions;
+            boolean saveOnExit;
+            boolean useDatabase;
+            String databasePath;
         }
 
     }
 
-    /**
-     * constructs a MainWindow from a builder object
-     *
-     * @param b Builder object for mainWindow
-     */
-    private void loadApplicationSettings(MainWindowBuilder b) {
-        this.windowDimensions = b.settings.windowDimensions;
-
-        this.indexedFilesMap = b.settings.indexedFilesMap;
-
-        for (Map.Entry<String, Date> e : this.indexedFilesMap.entrySet()) {
-            indexedFilesTableModel.addRow(new Object[]{e.getKey(), e.getValue()});
-        }
-
-        saveSettingsOnExitCheckBox.setSelected(b.settings.saveOnExit);
-        saveOnExit = b.settings.saveOnExit;
-
-        useDatabaseCheckbox.setSelected(b.settings.useDatabase);
-        useDatabase = b.settings.useDatabase;
-
-        this.databasePath = b.settings.databasePath;
-    }
-
-    /**
-     * calls JDialog::pack and sets the dialog visible
-     *
-     * @see Runnable
-     */
-    @Override
-    public void run() {
-        mainFrame.pack();
-        mainFrame.setVisible(true);
-    }
-
-    /**
-     * For UI components marked 'Custom Create'
-     * <p>
-     * Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
-     * this allows greater control over how objects are made instead of the default
-     * parameter-less constructor
-     * </p>
-     */
-    private void createUIComponents() {
-        // TODO: place custom component creation code here
-        // Note that this is not the place for NEW components
-        // It is only to setup components that have been marked custom
-        mainFrame = new JFrame("Search UI");
-        searchFilesChooser = new JFileChooser();
-
-        indexedFilesMap = new HashMap<>();
-        indexedFilesTableModel = makeTableModel(indexedFilesMap);
-        indexedFilesTable = new JTable(indexedFilesTableModel);
-
-        // This is just test data so the table shows up
-        // everything here is subject to change
-        String[] columnNames = {"File",
-                "Line Number"};
-
-        Object[][] data = {
-                {"testdata1.txt", "23"},
-                {"testdata4.txt", "107"},
-                {"testdata5.txt", "8"},
-                {"testdata11.txt", "34"},
-                {"testdata15.txt", "20"}
-        };
-
-        resultsTable = new JTable(data, columnNames);
-    }
-
-    private DefaultTableModel makeTableModel(Map<String, Date> map) {
-        DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"File Path", "Last Modified"}, 0
-        );
-        for (Map.Entry<String, Date> entry : map.entrySet()) {
-            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
-        }
-        return model;
-    }
 }

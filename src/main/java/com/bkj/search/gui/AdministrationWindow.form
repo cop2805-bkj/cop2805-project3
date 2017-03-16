@@ -70,23 +70,23 @@
         <properties/>
         <border type="none"/>
         <children>
-          <component id="1c2cb" class="javax.swing.JTable" binding="indexedFilesTable" custom-create="true">
-            <constraints border-constraint="Center"/>
-            <properties/>
-          </component>
-        </children>
-      </grid>
-      <grid id="f7344" layout-manager="BorderLayout" hgap="0" vgap="0">
-        <constraints border-constraint="South"/>
-        <properties/>
-        <border type="none"/>
-        <children>
           <component id="9e105" class="javax.swing.JButton" binding="closeFormButton">
-            <constraints border-constraint="Center"/>
+            <constraints border-constraint="South"/>
             <properties>
               <text value="Close"/>
             </properties>
           </component>
+          <scrollpane id="c9d43">
+            <constraints border-constraint="Center"/>
+            <properties/>
+            <border type="none"/>
+            <children>
+              <component id="1c2cb" class="javax.swing.JTable" binding="indexedFilesTable" custom-create="true">
+                <constraints/>
+                <properties/>
+              </component>
+            </children>
+          </scrollpane>
         </children>
       </grid>
     </children>
