@@ -12,12 +12,15 @@ public class FileInvertedIndex implements IFileInvertedIndex {
 
     public List<Pair<String, InvertedIndexEntry>> invertedIndex;
     private File fileBacking;
+    private int docid;
     private String MD5Sum;
     private Date lastModified;
 
-    public FileInvertedIndex(String file) throws IOException {
+    public FileInvertedIndex(String file, int docid) throws IOException {
         fileBacking = new File(file);
         invertedIndex = new ArrayList<>();
+        this.docid = docid;
+
         if(fileBacking.exists()) {
             MD5Sum = getCheckSum(fileBacking);
             lastModified = new Date(fileBacking.lastModified());
@@ -36,7 +39,7 @@ public class FileInvertedIndex implements IFileInvertedIndex {
 
     /**
      * rebuilds the Inverted Index from scratch
-     * @return True if successful, false if the method fails to rebuild the index
+     *
      */
     @Override
     public void
@@ -49,18 +52,21 @@ public class FileInvertedIndex implements IFileInvertedIndex {
             //System.out.printf("Read %d lines\n", strings.size());
             long lineCounter = 0;
             for(String line: strings) {
-                line.replaceAll("[^a-zA-Z ]", "");
+                // Regex search for any letter (a-z) and (A-Z) -> replace everything that is not that with nothing.
+                // effectivly removing all symbols from the text (! ? , ; ( ) etc...)
+                line.replaceAll("[^a-zA-Z0-9 ]", "");
+
+                // store everything as lower case
                 line.toLowerCase();
                 for(String word : line.split(" ")){
-                    invertedIndex.add(new Pair<>(word, new InvertedIndexEntry(fileBacking, lineCounter)));
+                    invertedIndex.add(new Pair<>(word, new InvertedIndexEntry(docid, lineCounter)));
                 }
                 lineCounter++;
             }
+            //System.out.printf("Index for %s contains %d entries\n",fileBacking.toString(),invertedIndex.size());
         } catch (IOException e) {
             throw e;
         }
-
-        //System.out.printf("Index for %s contains %d entries\n",fileBacking.toString(),invertedIndex.size());
     }
 
     /**

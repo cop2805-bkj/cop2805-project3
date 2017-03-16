@@ -71,9 +71,11 @@ public class AdministrationWindow implements Runnable {
         // TODO: Best case, this should run is a seperate thread and fire a event when it is done
         if (openFiles.size() > 0) {
             System.out.printf("Opening %d files for indexing%n", openFiles.size());
+            int docid = 0;
             for (String s : openFiles) {
                 try {
-                    mw.dataModel.addIndexedFile(new FileInvertedIndex(s));
+                    mw.dataModel.addIndexedFile(new FileInvertedIndex(s, docid));
+                    docid++;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

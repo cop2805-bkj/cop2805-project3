@@ -7,14 +7,12 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Function;
 
-/**
- * Created by bclaus on 3/8/17.
- */
-public class SearchUIModel implements IFileStore, ISaveable {
+public class SearchUIModel implements IFileStore, Saveable {
 
-    public List<String> openFiles;
-    public List<FileInvertedIndex> indexedFiles;
+    private List<String> openFiles;
+    private List<FileInvertedIndex> indexedFiles;
 
     private SearchUIModel(SearchUIModelBuilder.ModelSettings settings) {
         openFiles = new ArrayList<>();
@@ -61,20 +59,17 @@ public class SearchUIModel implements IFileStore, ISaveable {
 
     @Override
     public void saveToJson() {
-        SearchUIModelBuilder sui = new SearchUIModelBuilder().setIndexedFiles(indexedFiles);
-        List<String> openFilesStrList = new LinkedList<>();
 
-        for(String s : openFiles) {
-            openFilesStrList.add(s);
-        }
-        sui.setOpenFiles((String[])openFilesStrList.toArray());
+        SearchUIModelBuilder sui = new SearchUIModelBuilder()
+                .setIndexedFiles(indexedFiles)
+                .setOpenFiles(openFiles);
 
         Gson g = new Gson();
-        File settingsFile = new File("data.json");
-        if (settingsFile.exists() && settingsFile.canWrite()) settingsFile.delete();
+        File modelFile = new File("model.json");
+        if (modelFile.exists() && modelFile.canWrite()) modelFile.delete();
 
-        try (FileWriter fw = new FileWriter(settingsFile)) {
-            System.out.printf("Saving data model to disk%n");
+        try (FileWriter fw = new FileWriter(modelFile)) {
+            System.out.printf("Saving model to disk%n");
             fw.write(g.toJson(sui.settings));
             fw.close();
         } catch (IOException e) {
@@ -101,7 +96,7 @@ public class SearchUIModel implements IFileStore, ISaveable {
         }
 
         public SearchUIModelBuilder
-        setOpenFiles(String[] files) {
+        setOpenFiles(List<String> files) {
             for(String s : files) {
                 settings.openFileList.add(s);
             }
