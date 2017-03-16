@@ -1,6 +1,6 @@
 package com.bkj.search.gui;
 
-import com.bkj.search.utils.FileInvertedIndex;
+import com.bkj.search.utils.*;
 import com.google.gson.Gson;
 
 import javax.swing.*;
@@ -9,19 +9,17 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Map;
-import java.util.TreeMap;
+import java.text.Format;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.List;
+import java.util.function.Function;
 
 /**
  * @see Runnable
  * @since 0.1
  */
-public class MainWindow implements Runnable {
-    // Store the JSON representation of the builder settings for debug
-    // and to easily write it to disk.
-    private final String builderJsonString;
+public class MainWindow implements Runnable, Saveable, Loadable<MainWindow.MainWindowBuilder> {
     private JPanel topPanel;
     private JButton searchButton;
     private JTextField searchTextField;
@@ -47,23 +45,16 @@ public class MainWindow implements Runnable {
     private JButton importListButton;
     private JFileChooser searchFilesChooser;
 
-    /*
-        Settable settings.
-            Window dimensions
-            Open Files
-            (T/F) should we save?
-            where is the database located
-     */
     private JFrame mainFrame;
-    private TreeMap<String, Date> openFilesMap;
     private DefaultTableModel openFilesTableModel;
+
     private Dimension windowDimensions;
     private boolean saveOnExit;
     private boolean useDatabase;
     private String databasePath;
+    private final String builderJsonString;
 
-    // TODO: We will probably end up rebuilding the master index from scratch each time
-    private ArrayList<FileInvertedIndex> indexedFiles;
+    public SearchUIModel dataModel;
 
     /**
      * calls JDialog::pack and sets the dialog visible
@@ -76,10 +67,6 @@ public class MainWindow implements Runnable {
         mainFrame.setVisible(true);
     }
 
-    public TreeMap<String, Date> getOpenFiles() {
-        return openFilesMap;
-    }
-
     /**
      * creates a new main window frame along with content
      * <p>
@@ -87,9 +74,10 @@ public class MainWindow implements Runnable {
      * UI components
      * </p>
      */
-    private MainWindow(MainWindowBuilder b) {
+    private MainWindow(MainWindowBuilder b, SearchUIModel dm) {
+        this.dataModel = dm;
         $$$setupUI$$$();        // This must be first
-        loadApplicationSettings(b); // This must be second
+        loadFromJson(b);        // This must be second
 
         builderJsonString = b.toString();
         System.out.printf("JSON Builder: %s \n\n", builderJsonString);
@@ -103,11 +91,11 @@ public class MainWindow implements Runnable {
         });
 
         searchButton.addActionListener(actionEvent -> {
-            NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Searching does not work yet");
+            //TODO: implement searching
         });
 
         selectDBButton.addActionListener(actionEvent -> {
-            NotImplementedDialog d = new NotImplementedDialog("Not Implemented", "Database path does not work yet");
+            //TODO: implement database ability
         });
 
         aboutButton.addActionListener(actionEvent -> SwingUtilities.invokeLater(new AboutDialog()));
@@ -119,14 +107,19 @@ public class MainWindow implements Runnable {
             if (fcRetVal == JFileChooser.APPROVE_OPTION) {
                 File file = searchFilesChooser.getSelectedFile();
                 // TODO: Handle multiple files and recursive searching by selecting directories
-                openFilesMap.put(file.toPath().toString(), new Date(file.lastModified()));
-                openFilesTableModel.addRow(new Object[]{file.toPath().toString(), new Date(file.lastModified())});
+                dataModel.getOpenFiles().add(file.toString());
+
+
+                Format formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String dateString = formatter.format(new Date(file.lastModified()));
+
+                openFilesTableModel.addRow(new Object[]{file.getName(), dateString});
             }
         });
 
         // Imports a list of files vs a single file at a time
         importListButton.addActionListener(actionEvent -> {
-
+            //TODO: implement the ability to import a file list
         });
 
         // Removes selected file in file table
@@ -136,7 +129,7 @@ public class MainWindow implements Runnable {
                 int currentRow = openFilesTable.getSelectedRow();
                 String fileName = openFilesTable.getModel().getValueAt(currentRow, 0).toString();
 
-                openFilesMap.remove(fileName);
+                dataModel.getOpenFiles().remove(fileName);
                 ((DefaultTableModel) openFilesTable.getModel()).removeRow(currentRow);
 
             } catch (ArrayIndexOutOfBoundsException aie) {
@@ -159,7 +152,7 @@ public class MainWindow implements Runnable {
             public void windowClosing(WindowEvent we) {
                 if (saveOnExit) {
                     System.out.println("Saving and exiting...");
-                    saveApplicationSettings();
+                    saveToJson();
                 } else {
                     System.out.println("Saving without exiting...");
                 }
@@ -179,13 +172,13 @@ public class MainWindow implements Runnable {
 
     }
 
-    private void saveApplicationSettings() {
+    @Override
+    public void saveToJson() {
         MainWindowBuilder b = new MainWindow.MainWindowBuilder();
         b.setDatabasePath(databasePath);
 
         b.setSaveOnExit(saveOnExit);
         b.setUseDatabase(useDatabase);
-        b.setOpenFiles(openFilesMap);
 
         b.setWindowDimensions(windowDimensions.width, windowDimensions.height);
 
@@ -200,18 +193,7 @@ public class MainWindow implements Runnable {
             e.printStackTrace();
         }
 
-
-        //TODO: Save indexedFiles List
-        File indexFile = new File("InvertedIndex.json");
-        if (indexFile.exists() && indexFile.canWrite()) indexFile.delete();
-        Gson gson = new Gson();
-        try (FileWriter fw = new FileWriter(indexFile)) {
-            System.out.printf("WRITING INDEX TO DISK%n");
-            fw.write(gson.toJson(indexedFiles));
-            fw.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        dataModel.saveToJson();
     }
 
     /**
@@ -219,14 +201,10 @@ public class MainWindow implements Runnable {
      *
      * @param b Builder object for mainWindow
      */
-    private void loadApplicationSettings(MainWindowBuilder b) {
+    @Override
+    public void loadFromJson(MainWindowBuilder b) {
+
         windowDimensions = b.settings.windowDimensions;
-
-        openFilesMap = b.settings.openFilesMap;
-
-        for (Map.Entry<String, Date> e : openFilesMap.entrySet()) {
-            openFilesTableModel.addRow(new Object[]{e.getKey(), e.getValue()});
-        }
 
         saveSettingsOnExitCheckBox.setSelected(b.settings.saveOnExit);
         saveOnExit = b.settings.saveOnExit;
@@ -235,9 +213,6 @@ public class MainWindow implements Runnable {
         useDatabase = b.settings.useDatabase;
 
         this.databasePath = b.settings.databasePath;
-
-        // TODO: Load indexed files
-        indexedFiles = new ArrayList<>();
     }
 
     /**
@@ -255,8 +230,7 @@ public class MainWindow implements Runnable {
         mainFrame = new JFrame("Search UI");
         searchFilesChooser = new JFileChooser();
 
-        openFilesMap = new TreeMap<>();
-        openFilesTableModel = makeTableModel(openFilesMap);
+        openFilesTableModel = makeTableModel(dataModel.getOpenFiles());
         openFilesTable = new JTable(openFilesTableModel);
 
         // This is just test data so the table shows up
@@ -275,29 +249,23 @@ public class MainWindow implements Runnable {
         resultsTable = new JTable(data, columnNames);
     }
 
-    private DefaultTableModel makeTableModel(Map<String, Date> map) {
+    /**
+     * Makes a sutible DefaultTableModel for a JTable from a Map
+     *
+     * @param files A list containing path's to files
+     * @return
+     */
+    private DefaultTableModel makeTableModel(List<String> files) {
         DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"File Path", "Last Modified"}, 0
+                new Object[]{"File Name", "Last Modified"}, 0
         );
-        for (Map.Entry<String, Date> entry : map.entrySet()) {
-            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        for (String s : files) {
+            File f = new File(s);
+            if (f.exists())
+                model.addRow(new Object[]{f.getName(), f.lastModified()});
         }
         return model;
     }
-
-    public ArrayList<FileInvertedIndex> getIndexedFiles() {
-        return indexedFiles;
-    }
-
-    public void setIndexedFiles(ArrayList<FileInvertedIndex> indexedFiles) {
-        this.indexedFiles = indexedFiles;
-    }
-
-    public void addIndexedFile(FileInvertedIndex fii) {
-        this.indexedFiles.add(fii);
-    }
-
-    public void removeIndexedFile(int i) { this.indexedFiles.remove(i); }
 
     /**
      * Method generated by IntelliJ IDEA GUI Designer
@@ -440,15 +408,15 @@ public class MainWindow implements Runnable {
         return topPanel;
     }
 
+
     /**
      * Builder for MainWindow
      */
-    public static class MainWindowBuilder {
+    public static class MainWindowBuilder implements IBuildable<MainWindow, MainWindowBuilder> {
 
         MainWindowSettings settings = new MainWindowSettings();
 
         public MainWindowBuilder() {
-            settings.openFilesMap = new TreeMap<String, Date>();
             settings.windowDimensions = new Dimension(500, 650);
             settings.saveOnExit = false;
             settings.useDatabase = false;
@@ -503,23 +471,22 @@ public class MainWindow implements Runnable {
         }
 
         /**
-         * @param map HashMap of type String, Date
-         * @return
-         */
-        public MainWindowBuilder
-        setOpenFiles(TreeMap<String, Date> map) {
-            this.settings.openFilesMap = map;
-            return this;
-        }
-
-        /**
          * Terminates the builder and returns a configured MainWindow
          *
          * @return MainWindow
          */
         public MainWindow
         build() {
-            return new MainWindow(this);
+            FileReader fr = null;
+            SearchUIModel dm = null;
+            try {
+                fr = new FileReader("model.json");
+                dm = new SearchUIModel.SearchUIModelBuilder().makeFromJson(fr).build();
+            } catch (FileNotFoundException e) {
+                dm = new SearchUIModel.SearchUIModelBuilder().build();
+            }
+
+            return new MainWindow(this, dm);
         }
 
         /**
@@ -529,7 +496,7 @@ public class MainWindow implements Runnable {
          * @return
          */
         public MainWindowBuilder
-        builderFromJson(FileReader fr) {
+        makeFromJson(FileReader fr) {
             Gson gson = new Gson();
             settings = gson.fromJson(fr, MainWindowSettings.class);
             return this;
@@ -545,7 +512,6 @@ public class MainWindow implements Runnable {
         }
 
         private class MainWindowSettings {
-            TreeMap<String, Date> openFilesMap;
             Dimension windowDimensions;
             boolean saveOnExit;
             boolean useDatabase;

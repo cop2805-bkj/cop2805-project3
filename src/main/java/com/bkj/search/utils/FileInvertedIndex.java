@@ -3,20 +3,26 @@ package com.bkj.search.utils;
 import java.io.*;
 import java.util.*;
 
+import static com.bkj.search.utils.IMD5Checksum.getCheckSum;
+
 /**
  * @see InvertedIndexEntry
  */
-public class FileInvertedIndex {
+public class FileInvertedIndex implements IFileInvertedIndex {
+
     public List<Pair<String, InvertedIndexEntry>> invertedIndex;
     private File fileBacking;
+    private int docid;
     private String MD5Sum;
     private Date lastModified;
 
-    public FileInvertedIndex(String file) throws FileNotFoundException {
+    public FileInvertedIndex(String file, int docid) throws IOException {
         fileBacking = new File(file);
         invertedIndex = new ArrayList<>();
+        this.docid = docid;
+
         if(fileBacking.exists()) {
-            MD5Sum = MD5Checksum.getCheckSum(fileBacking);
+            MD5Sum = getCheckSum(fileBacking);
             lastModified = new Date(fileBacking.lastModified());
         } else {
             throw new FileNotFoundException();
@@ -24,15 +30,18 @@ public class FileInvertedIndex {
 
     }
 
+    @Override
     public String getFilePathString() {
         return fileBacking.toString();
     }
+    @Override
     public String getFileName() { return fileBacking.getName(); }
 
     /**
      * rebuilds the Inverted Index from scratch
-     * @return True if successful, false if the method fails to rebuild the index
+     *
      */
+    @Override
     public void
     rebuildIndex() throws IOException {
         try (BufferedReader br = new BufferedReader(new FileReader(fileBacking))) {
@@ -43,18 +52,21 @@ public class FileInvertedIndex {
             //System.out.printf("Read %d lines\n", strings.size());
             long lineCounter = 0;
             for(String line: strings) {
-                line.replaceAll("[^a-zA-Z ]", "");
+                // Regex search for any letter (a-z) and (A-Z) -> replace everything that is not that with nothing.
+                // effectivly removing all symbols from the text (! ? , ; ( ) etc...)
+                line.replaceAll("[^a-zA-Z0-9 ]", "");
+
+                // store everything as lower case
                 line.toLowerCase();
                 for(String word : line.split(" ")){
-                    invertedIndex.add(new Pair<>(word, new InvertedIndexEntry(fileBacking, lineCounter)));
+                    invertedIndex.add(new Pair<>(word, new InvertedIndexEntry(docid, lineCounter)));
                 }
                 lineCounter++;
             }
+            //System.out.printf("Index for %s contains %d entries\n",fileBacking.toString(),invertedIndex.size());
         } catch (IOException e) {
             throw e;
         }
-
-        //System.out.printf("Index for %s contains %d entries\n",fileBacking.toString(),invertedIndex.size());
     }
 
     /**
@@ -62,6 +74,7 @@ public class FileInvertedIndex {
      * @param searchString string to search for
      * @return true if found
      */
+    @Override
     public boolean
     containsTerm(String searchString) {
         boolean found = false;
@@ -79,6 +92,7 @@ public class FileInvertedIndex {
      * @param searchString
      * @return
      */
+    @Override
     public List<InvertedIndexEntry>
     getOccurrences(String searchString) {
         // linked list for fast inserts (at least for head inserts)
@@ -116,16 +130,19 @@ public class FileInvertedIndex {
 
     // This is here if it is required to retrieve the set
     // Don't use this please
+    @Override
     @Deprecated
     public List<Pair<String, InvertedIndexEntry>>
     getSet(){
         return invertedIndex;
     }
 
+    @Override
     public String getMD5Sum() {
         return MD5Sum;
     }
 
+    @Override
     public Date getLastModified() {
         return lastModified;
     }

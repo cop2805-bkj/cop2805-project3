@@ -5,25 +5,22 @@ import java.io.File;
 /**
  * Created by bclaus on 3/6/17.
  */
-public class InvertedIndexEntry {
-    private final String fileName;
+public class InvertedIndexEntry implements IInvertedIndexEntry {
+    private final int docID;
     private final long lineNumber;
 
 
-    public InvertedIndexEntry(File file, long lineNumber){
-        this.fileName = file.toString();
+    public InvertedIndexEntry(int documentIndex, long lineNumber){
+        this.docID = documentIndex;
         this.lineNumber = lineNumber;
-        File f = new File(fileName);
     }
 
-    public InvertedIndexEntry(String filePath, long lineNumber) {
-        this(new File(filePath), lineNumber);
+    @Override
+    public int getDocID() {
+        return docID;
     }
 
-    public String getFilePath() {
-        return fileName;
-    }
-
+    @Override
     public long getLineNumber() {
         return lineNumber;
     }

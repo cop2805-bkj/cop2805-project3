@@ -8,6 +8,7 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -27,7 +28,7 @@ public class AdministrationWindow implements Runnable {
 
     private JFrame mainFrame;
     private final MainWindow mw;
-    private final TreeMap<String, Date> openFiles;
+    private final List<String> openFiles;
     private DefaultTableModel indexedFilesTableModel;
 
     /**
@@ -35,7 +36,7 @@ public class AdministrationWindow implements Runnable {
      */
     public AdministrationWindow(MainWindow mw) {
         this.mw = mw;
-        openFiles = mw.getOpenFiles();
+        openFiles = mw.dataModel.getOpenFiles();
         $$$setupUI$$$();
 
 
@@ -70,18 +71,20 @@ public class AdministrationWindow implements Runnable {
         // TODO: Best case, this should run is a seperate thread and fire a event when it is done
         if (openFiles.size() > 0) {
             System.out.printf("Opening %d files for indexing%n", openFiles.size());
-            for (String s : openFiles.keySet()) {
+            int docid = 0;
+            for (String s : openFiles) {
                 try {
-                    mw.addIndexedFile(new FileInvertedIndex(s));
-                } catch (FileNotFoundException e) {
+                    mw.dataModel.addIndexedFile(new FileInvertedIndex(s, docid));
+                    docid++;
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
 
-            System.out.printf("Rebuilding %d indexes%n", mw.getIndexedFiles().size());
+            System.out.printf("Rebuilding %d indexes%n", mw.dataModel.getIndexedFiles().size());
             long currentTimeMillis;
             long totalTimeMillis;
-            for (FileInvertedIndex fii : mw.getIndexedFiles()) {
+            for (FileInvertedIndex fii : mw.dataModel.getIndexedFiles()) {
                 currentTimeMillis = System.currentTimeMillis();
                 System.out.printf("\t> Rebuilding %s [MD5:%s]%n", fii.getFileName(), fii.getMD5Sum());
                 try {
@@ -111,7 +114,7 @@ public class AdministrationWindow implements Runnable {
         mainFrame = new JFrame("Index Administration");
         TreeMap<String, Boolean> indexedFilesMap = new TreeMap<>();
         // we create the default state here, which is everything is *not* indexed
-        for (String file : openFiles.keySet()) {
+        for (String file : openFiles) {
             indexedFilesMap.put(file, false);
         }
         indexedFilesTableModel = makeTableModel(indexedFilesMap);
@@ -120,7 +123,7 @@ public class AdministrationWindow implements Runnable {
 
     private DefaultTableModel makeTableModel(Map<String, Boolean> map) {
         DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"File", "Indexed?"}, 0
+                new Object[]{"File Path", "Indexed?"}, 0
         );
         for (Map.Entry<String, Boolean> entry : map.entrySet()) {
             model.addRow(new Object[]{entry.getKey(), entry.getValue()});

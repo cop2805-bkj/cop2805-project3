@@ -7,14 +7,13 @@ import java.io.IOException;
 // Displays UI
 public class Main {
     public static void main(String[] args){
-        // In future versions we can handle different UI's for example from here
         File f = new File("settings.json");
         if(f.exists() && !f.isDirectory()) {
             String jsonStr;
             MainWindow mw;
             try (FileReader fr = new FileReader(f)) {
                 System.out.println("Found settings.json file...reading saved settings");
-                mw = new MainWindow.MainWindowBuilder().builderFromJson(fr).build();
+                mw = new MainWindow.MainWindowBuilder().makeFromJson(fr).build();
                 javax.swing.SwingUtilities.invokeLater(mw);
             } catch (IOException ie) {
                 ie.printStackTrace();
