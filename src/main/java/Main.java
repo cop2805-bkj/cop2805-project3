@@ -25,6 +25,5 @@ public class Main {
             javax.swing.SwingUtilities.invokeLater(
                     new MainWindow.MainWindowBuilder().setWindowDimensions(500,650).build());
         }
-
     }
 }
