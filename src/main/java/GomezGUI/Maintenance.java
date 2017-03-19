@@ -8,29 +8,39 @@
  * @author Kelvin
  */
 package GomezGUI;
-import GomezClasses.*;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.util.ArrayList;
+import GomezClasses.MyDialogs;
+import GomezClasses.FileManager;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
-public class Maintenance extends javax.swing.JFrame {
+public class Maintenance extends javax.swing.JFrame {    
+    private DefaultListModel list = new DefaultListModel();
+    private FileManager fm;
     /**
      * Creates new form Maintenance
      */
     public Maintenance() {
         initComponents();
-    }    
-    private MyDialogs tempMess = new MyDialogs();
-    private static ArrayList _FileCollection = new ArrayList();
-    private DefaultListModel list = new DefaultListModel();
-    private static MainInterface loadData = new MainInterface();
+        // Start: Loads data from InFile upon window init
+        fm = new FileManager();
+        try {
+            fm.readFile();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"File not found.","Error",
+            JOptionPane.PLAIN_MESSAGE);
+        }
+        
+        int contents = fm.list.size();
+        String str;
+        for(int i = 0; i < contents; i++){
+            str = fm.list.get(i);
+            list.addElement(str);
+        }
+        list_Files.setModel(list);
+        // End
+    }  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -160,23 +170,21 @@ public class Maintenance extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_RebuildListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_RebuildListActionPerformed
-        tempMess.showTempOut(); //*****Temporary Placeholder*****
+        new MyDialogs().showTempOut(); //*****Temporary Placeholder*****
     }//GEN-LAST:event_button_RebuildListActionPerformed
     /**
      * Adds files to the file list. -Kelvin
      * @param evt 
      */
     private void button_AddFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AddFileActionPerformed
-        FileManager af = new FileManager();
-        String pn = af.getPathStr();
-        
-        _FileCollection.add(pn);
+        fm.getPathStr();
+        int index = fm.list.size() -1;
+        list.addElement(fm.list.get(index));
         try {
-            af.writeToFile(pn);
-        } catch (java.io.IOException ex) {
+            fm.writeToFile(fm.list.get(index));
+        } catch (IOException ex) {
             Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
         }
-        list.addElement(pn);
         list_Files.setModel(list);
     }//GEN-LAST:event_button_AddFileActionPerformed
     /**
@@ -184,40 +192,25 @@ public class Maintenance extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_RemoveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_RemoveFileActionPerformed
-        try{
-            int index = list_Files.getSelectedIndex();
-            _FileCollection.remove(index);
-            list.removeElementAt(index);
-            list_Files.setModel(list);
-        }catch(ArrayIndexOutOfBoundsException e){
-            JOptionPane.showMessageDialog(null, "No file selected.");
-        }
-        
-        try{
-            File inputFile = new File("myFile.txt");
-            File tempFile = new File("myTempFile.txt");
-
-            BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-            BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile));
-
-            String lineToRemove = "bbb";
-            String currentLine;
-
-            while((currentLine = reader.readLine()) != null) {
-                // trim newline when comparing with lineToRemove
-                String trimmedLine = currentLine.trim();
-                if(trimmedLine.equals(lineToRemove)) continue;
-                writer.write(currentLine + System.getProperty("line.separator"));
+        int delete = list_Files.getSelectedIndex();
+        list.removeElementAt(delete);
+        fm.list.remove(delete);
+        try {
+            new FileManager().clearFile();
+            int content = fm.list.size();
+            for(int i =0; i < content; i++){
+                fm.writeToFile(fm.list.get(i));
             }
-            writer.close(); 
-            reader.close(); 
-            boolean successful = tempFile.renameTo(inputFile);
-        }catch(Exception e){}
+        } catch (IOException ex) {
+            Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        list_Files.setModel(list);
     }//GEN-LAST:event_button_RemoveFileActionPerformed
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
-    public static void main(String args[]) {
+    public static void main(String args[]) throws java.io.IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -240,6 +233,7 @@ public class Maintenance extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(Maintenance.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -247,7 +241,6 @@ public class Maintenance extends javax.swing.JFrame {
                 new Maintenance().setVisible(true);
             }
         });
-        _FileCollection = loadData.getLoadData();
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton button_AddFile;
@@ -259,7 +252,4 @@ public class Maintenance extends javax.swing.JFrame {
     private javax.swing.JLabel label_MaintenanceHeading;
     private javax.swing.JList<String> list_Files;
     // End of variables declaration//GEN-END:variables
-    private Exception IOException() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }
