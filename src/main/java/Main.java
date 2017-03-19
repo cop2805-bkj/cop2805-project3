@@ -6,11 +6,9 @@ import GUI.Main_UI;
 public class Main {
     public static void main(String[] args){
         
-        java.awt.EventQueue.invokeLater(new Runnable(){
-            public void run() {
-                Main_UI userInterface = new Main_UI();
-                userInterface.setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            Main_UI userInterface = new Main_UI();
+            userInterface.setVisible(true);
         });    
     }
 }
