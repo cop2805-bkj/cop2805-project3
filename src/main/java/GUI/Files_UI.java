@@ -1,11 +1,8 @@
 package GUI;
 
-import java.io.File;
-import java.util.ResourceBundle.Control;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
 import javax.swing.text.BadLocationException;
 
 /**
@@ -129,12 +126,8 @@ public class Files_UI extends javax.swing.JFrame {
         filesTextArea.append(pathName + "\n");    
     }//GEN-LAST:event_fileAddButtonActionPerformed
 
+    // Removes files one line at a time
     private void fileRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileRemoveButtonActionPerformed
-        /*String textToBeDeleted = filesTextArea.getText();
-        int length = textToBeDeleted.length();
-        filesTextArea.replaceRange(" ", 0, length);
-        System.out.println(textToBeDeleted);
-        */
         int end = 0;
         try {
             end = filesTextArea.getLineEndOffset(0);
@@ -144,15 +137,9 @@ public class Files_UI extends javax.swing.JFrame {
         filesTextArea.replaceRange("", 0, end);
     }//GEN-LAST:event_fileRemoveButtonActionPerformed
 
-    /**
-     * @param args the command line arguments
-     */
     public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
+       
+        // Gets look and feel for UI with try catch
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
@@ -163,11 +150,8 @@ public class Files_UI extends javax.swing.JFrame {
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(Files_UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
-        //</editor-fold>
-        
-        //</editor-fold>
 
-        /* Create and display the form */
+        // Create and display the form 
         java.awt.EventQueue.invokeLater(() -> {
             new Files_UI().setVisible(true);
         });
