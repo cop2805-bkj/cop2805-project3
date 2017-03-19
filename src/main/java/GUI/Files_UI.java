@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -132,10 +133,18 @@ public class Files_UI extends javax.swing.JFrame {
     }//GEN-LAST:event_fileAddButtonActionPerformed
 
     private void fileRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileRemoveButtonActionPerformed
-        String textToBeDeleted = filesTextArea.getText();
+        /*String textToBeDeleted = filesTextArea.getText();
         int length = textToBeDeleted.length();
         filesTextArea.replaceRange(" ", 0, length);
         System.out.println(textToBeDeleted);
+        */
+        int end = 0;
+        try {
+            end = filesTextArea.getLineEndOffset(0);
+        } catch (BadLocationException ex) {
+            Logger.getLogger(Files_UI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        filesTextArea.replaceRange("", 0, end);
     }//GEN-LAST:event_fileRemoveButtonActionPerformed
 
     /**
