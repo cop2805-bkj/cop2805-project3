@@ -5,14 +5,9 @@
  */
 package GomezGUI;
 import GomezClasses.MyDialogs;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
+import GomezClasses.FileManager;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Kelvin
@@ -195,8 +190,7 @@ public class MainInterface extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_AboutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AboutActionPerformed
-        MyDialogs about = new MyDialogs();
-        about.showAbout();
+        new MyDialogs().showAbout();
     }//GEN-LAST:event_button_AboutActionPerformed
     /**
      * Disables the other radio buttons when this button is clicked.
@@ -222,6 +216,14 @@ public class MainInterface extends javax.swing.JFrame {
      */
     private void button_MaintenanceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_MaintenanceActionPerformed
         new Maintenance().setVisible(true);
+        
+        FileManager manage = new FileManager();    
+        try {
+            manage.readFile();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"File not found.","Error",
+            JOptionPane.PLAIN_MESSAGE);
+        }
     }//GEN-LAST:event_button_MaintenanceActionPerformed
     /**
      * Exits the application when clicked.
@@ -235,8 +237,7 @@ public class MainInterface extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SearchActionPerformed
-        MyDialogs tempMess = new MyDialogs();
-        tempMess.showTempOut(); //*****Temporary Placeholder*****
+        new MyDialogs().showTempOut(); //*****Temporary Placeholder*****
     }//GEN-LAST:event_button_SearchActionPerformed
     /**
      * @param args the command line arguments
@@ -290,31 +291,4 @@ public class MainInterface extends javax.swing.JFrame {
     private javax.swing.JTextArea textArea_Results;
     private javax.swing.JTextField textField_SearchBar;
     // End of variables declaration//GEN-END:variables
-    private FileInputStream fstream;
-    private BufferedReader br;
-    private ArrayList LoadCollection = new ArrayList();
-    private String str;
-    /**
-     * Loads data from InFile
-     * @throws IOException 
-     */
-    public void Load() throws IOException{
-        try{
-            fstream = new FileInputStream("InFile.txt");
-            br = new BufferedReader(new InputStreamReader(fstream));
-            
-            while((str = br.readLine()) != null){
-                LoadCollection.add(str);
-            }
-        }catch(IOException e){}
-    }
-    /**
-     * Other classes can access data with this
-     * @return 
-     */
-    public ArrayList getLoadData(){
-        return LoadCollection;
-    }
-    
 }
-
