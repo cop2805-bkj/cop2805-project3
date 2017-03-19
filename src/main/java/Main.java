@@ -1,4 +1,4 @@
-import Jons_GUI.Main_UI;
+import GUI.Main_UI;
 
 /**
  * Created by Jonathan Llaneras on 3.18.17
