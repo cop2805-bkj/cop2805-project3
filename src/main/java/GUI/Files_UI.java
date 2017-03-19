@@ -5,9 +5,12 @@
  */
 package GUI;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -106,12 +109,26 @@ public class Files_UI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void fileAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileAddButtonActionPerformed
-        try {
-            Process p;
-            p = new ProcessBuilder("explorer.exe", "/select,C:\\directory\\selectedFile").start();
-                    } catch (IOException ex) {
-            Logger.getLogger(Files_UI.class.getName()).log(Level.SEVERE, null, ex);
+    
+        JFileChooser chooser = new JFileChooser();
+        chooser.setCurrentDirectory(new java.io.File("Users"));
+        chooser.setDialogTitle("File Explorer");
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        chooser.setAcceptAllFileFilterUsed(false);
+
+        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File file;
+            file = chooser.getSelectedFile();
+            String pathName = file.toString();
+            System.out.println(pathName);
+            filesTextArea.append(pathName + "\n");
+        } else if (chooser.showOpenDialog(null) == JFileChooser.ERROR_OPTION){
+            JOptionPane.showMessageDialog(null,"ALERT MESSAGE","TITLE",JOptionPane.WARNING_MESSAGE);
         }
+        
+       /* File_Add file = new File_Add() {};
+        file.run();
+        filesTextArea.append(pathName + "\n"); */    
     }//GEN-LAST:event_fileAddButtonActionPerformed
 
     /**
@@ -154,7 +171,7 @@ public class Files_UI extends javax.swing.JFrame {
     private javax.swing.JButton fileRemoveButton;
     private javax.swing.JPanel filesPanel;
     private javax.swing.JScrollPane filesScrollPane;
-    private javax.swing.JTextArea filesTextArea;
+    public static javax.swing.JTextArea filesTextArea;
     private javax.swing.JLabel filesTitleLabel;
     // End of variables declaration//GEN-END:variables
 }
