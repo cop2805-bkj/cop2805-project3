@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import java.io.File;
@@ -58,6 +53,11 @@ public class Files_UI extends javax.swing.JFrame {
 
         fileRemoveButton.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         fileRemoveButton.setText("Remove");
+        fileRemoveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fileRemoveButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout filesPanelLayout = new javax.swing.GroupLayout(filesPanel);
         filesPanel.setLayout(filesPanelLayout);
@@ -119,7 +119,7 @@ public class Files_UI extends javax.swing.JFrame {
         if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
             File file;
             file = chooser.getSelectedFile();
-            String pathName = file.toString();
+            String pathName = file.toString().trim();
             System.out.println(pathName);
             filesTextArea.append(pathName + "\n");
         } else if (chooser.showOpenDialog(null) == JFileChooser.ERROR_OPTION){
@@ -130,6 +130,13 @@ public class Files_UI extends javax.swing.JFrame {
         file.run();
         filesTextArea.append(pathName + "\n"); */    
     }//GEN-LAST:event_fileAddButtonActionPerformed
+
+    private void fileRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileRemoveButtonActionPerformed
+        String textToBeDeleted = filesTextArea.getText();
+        int length = textToBeDeleted.length();
+        filesTextArea.replaceRange(" ", 0, length);
+        System.out.println(textToBeDeleted);
+    }//GEN-LAST:event_fileRemoveButtonActionPerformed
 
     /**
      * @param args the command line arguments
