@@ -1,6 +1,7 @@
 package GUI;
 
 import java.io.File;
+import java.util.ResourceBundle.Control;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -35,6 +36,7 @@ public class Files_UI extends javax.swing.JFrame {
         filesScrollPane = new javax.swing.JScrollPane();
         filesTextArea = new javax.swing.JTextArea();
         fileRemoveButton = new javax.swing.JButton();
+        filesCheckBox = new javax.swing.JCheckBox();
 
         filesTitleLabel.setFont(new java.awt.Font("Times New Roman", 3, 30)); // NOI18N
         filesTitleLabel.setText("Add/Remove Files");
@@ -59,6 +61,9 @@ public class Files_UI extends javax.swing.JFrame {
             }
         });
 
+        filesCheckBox.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        filesCheckBox.setText("Save Files");
+
         javax.swing.GroupLayout filesPanelLayout = new javax.swing.GroupLayout(filesPanel);
         filesPanel.setLayout(filesPanelLayout);
         filesPanelLayout.setHorizontalGroup(
@@ -72,7 +77,8 @@ public class Files_UI extends javax.swing.JFrame {
                     .addGroup(filesPanelLayout.createSequentialGroup()
                         .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(fileAddButton, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
-                            .addComponent(fileRemoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(fileRemoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(filesCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -88,10 +94,10 @@ public class Files_UI extends javax.swing.JFrame {
                         .addComponent(fileAddButton, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fileRemoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(filesPanelLayout.createSequentialGroup()
-                        .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
-                        .addContainerGap())))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(filesCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -108,6 +114,7 @@ public class Files_UI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Adds files with full pathname to the text area
     private void fileAddButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileAddButtonActionPerformed
     
         JFileChooser chooser = new JFileChooser();
@@ -116,19 +123,10 @@ public class Files_UI extends javax.swing.JFrame {
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         chooser.setAcceptAllFileFilterUsed(false);
 
-        if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
-            File file;
-            file = chooser.getSelectedFile();
-            String pathName = file.toString().trim();
-            System.out.println(pathName);
-            filesTextArea.append(pathName + "\n");
-        } else if (chooser.showOpenDialog(null) == JFileChooser.ERROR_OPTION){
-            JOptionPane.showMessageDialog(null,"ALERT MESSAGE","TITLE",JOptionPane.WARNING_MESSAGE);
-        }
-        
-       /* File_Add file = new File_Add() {};
+        File_Add file = new File_Add() {};
         file.run();
-        filesTextArea.append(pathName + "\n"); */    
+        String pathName = file.pathName();
+        filesTextArea.append(pathName + "\n");    
     }//GEN-LAST:event_fileAddButtonActionPerformed
 
     private void fileRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileRemoveButtonActionPerformed
@@ -178,6 +176,7 @@ public class Files_UI extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton fileAddButton;
     private javax.swing.JButton fileRemoveButton;
+    private javax.swing.JCheckBox filesCheckBox;
     private javax.swing.JPanel filesPanel;
     private javax.swing.JScrollPane filesScrollPane;
     public static javax.swing.JTextArea filesTextArea;
