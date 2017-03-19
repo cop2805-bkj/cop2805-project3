@@ -1,5 +1,11 @@
 package GUI;
 
+import java.awt.FileDialog;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
@@ -9,12 +15,12 @@ import javax.swing.text.BadLocationException;
  *
  * @author Jonathan Llaneras
  */
-public class Files_UI extends javax.swing.JFrame {
+public class File_UI extends javax.swing.JFrame {
 
     /**
      * Creates new form Files_UI
      */
-    public Files_UI() {
+    public File_UI() {
         initComponents();
     }
 
@@ -33,7 +39,7 @@ public class Files_UI extends javax.swing.JFrame {
         filesScrollPane = new javax.swing.JScrollPane();
         filesTextArea = new javax.swing.JTextArea();
         fileRemoveButton = new javax.swing.JButton();
-        filesCheckBox = new javax.swing.JCheckBox();
+        saveButton = new javax.swing.JButton();
 
         filesTitleLabel.setFont(new java.awt.Font("Times New Roman", 3, 30)); // NOI18N
         filesTitleLabel.setText("Add/Remove Files");
@@ -48,7 +54,9 @@ public class Files_UI extends javax.swing.JFrame {
 
         filesTextArea.setColumns(20);
         filesTextArea.setRows(5);
+        filesTextArea.setWrapStyleWord(true);
         filesScrollPane.setViewportView(filesTextArea);
+        filesTextArea.getAccessibleContext().setAccessibleDescription("");
 
         fileRemoveButton.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
         fileRemoveButton.setText("Remove");
@@ -58,8 +66,14 @@ public class Files_UI extends javax.swing.JFrame {
             }
         });
 
-        filesCheckBox.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
-        filesCheckBox.setText("Save Files");
+        saveButton.setFont(new java.awt.Font("Times New Roman", 0, 14)); // NOI18N
+        saveButton.setText("Save");
+        saveButton.setToolTipText("Saves files to text file for next use...");
+        saveButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout filesPanelLayout = new javax.swing.GroupLayout(filesPanel);
         filesPanel.setLayout(filesPanelLayout);
@@ -75,7 +89,7 @@ public class Files_UI extends javax.swing.JFrame {
                         .addGroup(filesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(fileAddButton, javax.swing.GroupLayout.DEFAULT_SIZE, 122, Short.MAX_VALUE)
                             .addComponent(fileRemoveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(filesCheckBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(saveButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)))
                 .addContainerGap())
@@ -92,7 +106,7 @@ public class Files_UI extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(fileRemoveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(filesCheckBox, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(saveButton, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(filesScrollPane, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -132,10 +146,29 @@ public class Files_UI extends javax.swing.JFrame {
         try {
             end = filesTextArea.getLineEndOffset(0);
         } catch (BadLocationException ex) {
-            Logger.getLogger(Files_UI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(File_UI.class.getName()).log(Level.SEVERE, null, ex);
         }
         filesTextArea.replaceRange("", 0, end);
     }//GEN-LAST:event_fileRemoveButtonActionPerformed
+
+    @SuppressWarnings("CallToPrintStackTrace")
+    private void saveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_saveButtonActionPerformed
+        String getText = filesTextArea.getText();
+        
+        if (getText.length() > 0) {
+            JFileChooser jfc = new JFileChooser();
+            jfc.setCurrentDirectory(new java.io.File("Users"));
+            int retrival = jfc.showSaveDialog(null);
+            if (retrival == JFileChooser.APPROVE_OPTION) {
+                   try {
+                       FileWriter fw = new FileWriter(jfc.getSelectedFile() + ".txt");
+                       fw.write(getText);
+                   } catch (IOException ex) {
+                       ex.printStackTrace();
+                   }
+            }
+        }
+    }//GEN-LAST:event_saveButtonActionPerformed
 
     public static void main(String args[]) {
        
@@ -148,22 +181,22 @@ public class Files_UI extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Files_UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(File_UI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
 
         // Create and display the form 
         java.awt.EventQueue.invokeLater(() -> {
-            new Files_UI().setVisible(true);
+            new File_UI().setVisible(true);
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton fileAddButton;
     private javax.swing.JButton fileRemoveButton;
-    private javax.swing.JCheckBox filesCheckBox;
     private javax.swing.JPanel filesPanel;
     private javax.swing.JScrollPane filesScrollPane;
     public static javax.swing.JTextArea filesTextArea;
     private javax.swing.JLabel filesTitleLabel;
+    private javax.swing.JButton saveButton;
     // End of variables declaration//GEN-END:variables
 }
