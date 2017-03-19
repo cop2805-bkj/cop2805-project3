@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import java.awt.event.*;
@@ -54,6 +49,11 @@ public class Main_UI extends javax.swing.JFrame {
         searchtextField.setText("");
 
         searchButton.setText("Search");
+        searchButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchButtonActionPerformed(evt);
+            }
+        });
 
         multiLineTextField.setColumns(20);
         multiLineTextField.setRows(5);
@@ -161,6 +161,10 @@ public class Main_UI extends javax.swing.JFrame {
         Files_UI filesUI = new Files_UI();
         filesUI.setVisible(true);
     }//GEN-LAST:event_fileButtonActionPerformed
+
+    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_searchButtonActionPerformed
 
     /**
      * @param args the command line arguments
