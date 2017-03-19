@@ -8,22 +8,29 @@
  * @author Kelvin
  */
 package GomezClasses;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.*;
 /**
  * This class holds the adding files logic.
  * @author Kelvin
  */
 public class FileManager {
+    public String pathname;
+    public ArrayList<String> list = new ArrayList<String>();
+    
     /**
      * Allows for search and selection of file and
-     * returns the pathname as a string
-     * @return 
+     * returns the pathname as a string. It also
+     * appends the string to the ArrayList. 
      */
-    public String getPathStr(){
+    public void getPathStr(){
         JFileChooser chooser = new JFileChooser();
         File file;
         String str = ".";
@@ -34,10 +41,11 @@ public class FileManager {
             file = chooser.getSelectedFile();
             str = file.toPath().toString();
         }
-	return str;
+	pathname = str;
+        list.add(pathname);
     }
     /**
-     * Writes the pathname of the selected file to the embedded text file.
+     * Writes the pathname of the selected file to the embedded text file ("InFile.txt").
      * @param str
      * @throws IOException 
      */
@@ -49,5 +57,36 @@ public class FileManager {
             writer.flush();
             writer.close();
         }
-    }  
+    }
+    /**
+     * Reads data from a file and appends it to the ArrayList.
+     * @throws java.io.IOException
+     */
+    public void readFile() throws IOException{
+        try (BufferedReader br = new BufferedReader(new FileReader("InFile.txt"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+               list.add(line);
+            }
+        }
+    }
+    /**
+     * Reads all data from the ArrayList.
+     */
+    public void readList(){
+        int contents = list.size();
+        String str;
+        for(int i = 0; i < contents; i++){
+            str = list.get(i);
+        }
+    }
+    /**
+     * Deletes data from InFile
+     * @throws java.io.FileNotFoundException
+     */
+    public void clearFile() throws FileNotFoundException, IOException{
+        File file = new File("InFile.txt");
+        file.delete();
+        file.createNewFile();
+    }
 }
