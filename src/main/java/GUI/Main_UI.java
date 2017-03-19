@@ -155,7 +155,7 @@ public class Main_UI extends javax.swing.JFrame {
     }//GEN-LAST:event_searchComboBoxActionPerformed
 
     private void fileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileButtonActionPerformed
-        Files_UI filesUI = new Files_UI();
+        File_UI filesUI = new File_UI();
         filesUI.setVisible(true);
     }//GEN-LAST:event_fileButtonActionPerformed
 
