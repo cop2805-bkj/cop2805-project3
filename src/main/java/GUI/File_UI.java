@@ -16,7 +16,7 @@ public class File_UI extends javax.swing.JFrame {
     private DefaultListModel model = new DefaultListModel(); 
     private File file = new File("list.txt");
     /**
-     * Creates new form Files_UI
+     * Creates new form Files_UI and reads text file
      */
     public File_UI() {
         initComponents();
@@ -140,7 +140,7 @@ public class File_UI extends javax.swing.JFrame {
        }
     }//GEN-LAST:event_fileAddButtonActionPerformed
 
-    // Removes files
+    // Removes files by selection
     private void fileRemoveButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileRemoveButtonActionPerformed
         int i =  fileList.getSelectedIndex();
         model.removeElementAt(i);

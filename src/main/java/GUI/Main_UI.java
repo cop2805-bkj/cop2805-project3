@@ -1,5 +1,7 @@
 package GUI;
 
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author Jonathan Llaneras
@@ -145,22 +147,24 @@ public class Main_UI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    // Opens About_UI
     private void aboutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_aboutButtonActionPerformed
         About_UI aboutUI = new About_UI();
         aboutUI.setVisible(true);
     }//GEN-LAST:event_aboutButtonActionPerformed
 
     private void searchComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchComboBoxActionPerformed
-        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, "Not implemented yet!!!");
     }//GEN-LAST:event_searchComboBoxActionPerformed
 
+    // Opens File_UI
     private void fileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileButtonActionPerformed
         File_UI filesUI = new File_UI();
         filesUI.setVisible(true);
     }//GEN-LAST:event_fileButtonActionPerformed
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        // TODO add your handling code here:
+        JOptionPane.showMessageDialog(null, "Not implemented yet!!!");
     }//GEN-LAST:event_searchButtonActionPerformed
 
     public static void main(String args[]) {
