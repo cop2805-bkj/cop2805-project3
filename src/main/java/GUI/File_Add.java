@@ -21,6 +21,7 @@ public class File_Add {
     
     // Returns string pathName for Files_UI
     public String pathName() {
+        @SuppressWarnings("UnusedAssignment")
         String pathNameReturn = " ";
         pathNameReturn = pathName;
         return pathNameReturn;
