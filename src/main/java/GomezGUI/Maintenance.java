@@ -10,6 +10,8 @@
 package GomezGUI;
 import GomezClasses.MyDialogs;
 import GomezClasses.FileManager;
+import GomezClasses.Mapping;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +20,7 @@ import javax.swing.JOptionPane;
 public class Maintenance extends javax.swing.JFrame {    
     private DefaultListModel list = new DefaultListModel();
     private FileManager fm;
+    private Mapping map;
     /**
      * Creates new form Maintenance
      */
@@ -40,6 +43,7 @@ public class Maintenance extends javax.swing.JFrame {
         }
         list_Files.setModel(list);
         // End
+        System.out.println(fm.list);
     }  
     /**
      * This method is called from within the constructor to initialize the form.
@@ -186,6 +190,11 @@ public class Maintenance extends javax.swing.JFrame {
             Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
         }
         list_Files.setModel(list);
+        try{
+            map.add(fm.list);
+        }catch(FileNotFoundException e){
+            JOptionPane.showMessageDialog(null,"File not found.","Error",
+            JOptionPane.PLAIN_MESSAGE);}
     }//GEN-LAST:event_button_AddFileActionPerformed
     /**
      * Removes selected file from the file list. -Kelvin
