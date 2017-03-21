@@ -1,11 +1,18 @@
-package com.bkj.search.gui;
+package com.bkj.search.bradGUI;
+
+import com.bkj.search.bradUtils.FileInvertedIndex;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
+ * @see Runnable
  * @since 0.1
- * @see java.lang.Runnable
  */
 public class AdministrationWindow implements Runnable {
     private JPanel topPanel;
@@ -18,35 +25,76 @@ public class AdministrationWindow implements Runnable {
     private JButton closeFormButton;
 
     private JFrame mainFrame;
+    private final MainWindow mw;
+    private final List<String> openFiles;
+    private DefaultTableModel indexedFilesTableModel;
 
     /**
      * Creates a default Administration Window to manage index files
      */
-    public AdministrationWindow() {
+    public AdministrationWindow(MainWindow mw) {
+        this.mw = mw;
+        openFiles = mw.dataModel.getOpenFiles();
         $$$setupUI$$$();
+
+
         closeFormButton.addActionListener(actionEvent -> mainFrame.dispose());
 
         addIndexButton.addActionListener(actionEvent -> {
-            // TODO: event handler for adding a index directly
+            // TODO: Should we include the ability to add indexes manually?
+            // It sounds like it would only break things without adding functionality
         });
         removeIndexButton.addActionListener(actionEvent -> {
-            // TODO: event handler for removing a index directly
+            // TODO: should we be able to remove indexed files?
+            // because so far the only way to add a file is by adding it to the MainWindow
         });
         updateIndexButton.addActionListener(actionEvent -> {
-            // TODO: event handler to force a update of a index from the backing file
+            int selectedIndex = indexedFilesTable.getSelectedRow();
+
         });
 
         mainFrame.setContentPane($$$getRootComponent$$$());
         mainFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        mainFrame.setPreferredSize(new Dimension(400, 400));
+        mainFrame.setPreferredSize(new Dimension(850, 250));
     }
 
     /**
      * calls JDialog::pack and sets the dialog visible
-     * @see java.lang.Runnable
+     *
+     * @see Runnable
      */
     @Override
     public void run() {
+
+        // TODO: Best case, this should run is a seperate thread and fire a event when it is done
+        if (openFiles.size() > 0) {
+            System.out.printf("Opening %d files for indexing%n", openFiles.size());
+            int docid = 0;
+            for (String s : openFiles) {
+                try {
+                    mw.dataModel.addIndexedFile(new FileInvertedIndex(s, docid));
+                    docid++;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.printf("Rebuilding %d indexes%n", mw.dataModel.getIndexedFiles().size());
+            long currentTimeMillis;
+            long totalTimeMillis;
+            for (FileInvertedIndex fii : mw.dataModel.getIndexedFiles()) {
+                currentTimeMillis = System.currentTimeMillis();
+                System.out.printf("\t> Rebuilding %s [MD5:%s]%n", fii.getFileName(), fii.getMD5Sum());
+                try {
+                    fii.rebuildIndex();
+                } catch (IOException e) {
+                    System.out.printf("\t> !!!Failed to index %s!!!%n", fii.getFilePathString());
+                    e.printStackTrace();
+                }
+                totalTimeMillis = System.currentTimeMillis() - currentTimeMillis;
+                System.out.printf("Indexed %s in %d Milliseconds%n", fii.getFilePathString(), totalTimeMillis);
+            }
+        }
         mainFrame.pack();
         mainFrame.setVisible(true);
     }
@@ -54,27 +102,31 @@ public class AdministrationWindow implements Runnable {
     /**
      * For UI components marked 'Custom Create'
      * <p>
-     *     Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
-     *     this allows greater control over how objects are made instead of the default
-     *     parameter-less constructor
+     * Intellij generates the $$$setupUI$$$() method and calls createUIComponents()
+     * this allows greater control over how objects are made instead of the default
+     * parameter-less constructor
      * </p>
      */
     private void createUIComponents() {
         // TODO: place custom component creation code here
         mainFrame = new JFrame("Index Administration");
+        TreeMap<String, Boolean> indexedFilesMap = new TreeMap<>();
+        // we create the default state here, which is everything is *not* indexed
+        for (String file : openFiles) {
+            indexedFilesMap.put(file, false);
+        }
+        indexedFilesTableModel = makeTableModel(indexedFilesMap);
+        indexedFilesTable = new JTable(indexedFilesTableModel);
+    }
 
-        String[] columnNames = {"File",
-                "Status"};
-
-        Object[][] data = {
-                {"testdata1.txt", "Indexed"},
-                {"testdata4.txt", "Indexed"},
-                {"testdata5.txt", "Out of Date"},
-                {"testdata11.txt", "Indexed"},
-                {"testdata15.txt", "Indexed"}
-        };
-
-        indexedFilesTable = new JTable(data, columnNames);
+    private DefaultTableModel makeTableModel(Map<String, Boolean> map) {
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"File Path", "Indexed?"}, 0
+        );
+        for (Map.Entry<String, Boolean> entry : map.entrySet()) {
+            model.addRow(new Object[]{entry.getKey(), entry.getValue()});
+        }
+        return model;
     }
 
     /**
@@ -140,13 +192,12 @@ public class AdministrationWindow implements Runnable {
         indexedFilesPanel = new JPanel();
         indexedFilesPanel.setLayout(new BorderLayout(0, 0));
         topPanel.add(indexedFilesPanel, BorderLayout.CENTER);
-        indexedFilesPanel.add(indexedFilesTable, BorderLayout.CENTER);
-        final JPanel panel1 = new JPanel();
-        panel1.setLayout(new BorderLayout(0, 0));
-        topPanel.add(panel1, BorderLayout.SOUTH);
         closeFormButton = new JButton();
         closeFormButton.setText("Close");
-        panel1.add(closeFormButton, BorderLayout.CENTER);
+        indexedFilesPanel.add(closeFormButton, BorderLayout.SOUTH);
+        final JScrollPane scrollPane1 = new JScrollPane();
+        indexedFilesPanel.add(scrollPane1, BorderLayout.CENTER);
+        scrollPane1.setViewportView(indexedFilesTable);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.bkj.search.gui;
+package com.bkj.search.bradGUI;
 
 import javax.swing.*;
 import java.awt.*;
