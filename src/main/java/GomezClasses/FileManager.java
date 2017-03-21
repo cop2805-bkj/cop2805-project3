@@ -33,15 +33,18 @@ public class FileManager {
     public void getPathStr(){
         JFileChooser chooser = new JFileChooser();
         File file;
-        String str = ".";
+        String str;
         
 	chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int results = chooser.showOpenDialog(chooser);
        	if(results == JFileChooser.APPROVE_OPTION){
             file = chooser.getSelectedFile();
             str = file.toPath().toString();
+            pathname = str;
+        }else if(results == JFileChooser.CANCEL_OPTION){
+            JOptionPane.showMessageDialog(null,"Operation canceled.","Message",
+            JOptionPane.PLAIN_MESSAGE);
         }
-	pathname = str;
         list.add(pathname);
     }
     /**
