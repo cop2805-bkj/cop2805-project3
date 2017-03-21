@@ -3,9 +3,9 @@
  * project. Anything that is useful will be integrated into the main project.
  * This is not to be used as the main project submission. -Kelvin
  */
-package GomezGUI;
-import GomezClasses.MyDialogs;
-import GomezClasses.FileManager;
+package com.bkj.search.GomezGUI;
+import com.bkj.search.GomezClasses.MyDialogs;
+import com.bkj.search.GomezClasses.FileManager;
 import java.io.IOException;
 import javax.swing.JOptionPane;
 /**

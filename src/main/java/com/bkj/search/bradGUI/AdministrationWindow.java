@@ -1,13 +1,11 @@
-package com.bkj.search.gui;
+package com.bkj.search.bradGUI;
 
-import com.bkj.search.utils.FileInvertedIndex;
+import com.bkj.search.bradUtils.FileInvertedIndex;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;

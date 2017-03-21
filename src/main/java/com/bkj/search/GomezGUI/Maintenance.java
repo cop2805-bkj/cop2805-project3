@@ -7,10 +7,10 @@
  *
  * @author Kelvin
  */
-package GomezGUI;
-import GomezClasses.MyDialogs;
-import GomezClasses.FileManager;
-import GomezClasses.Mapping;
+package com.bkj.search.GomezGUI;
+import com.bkj.search.GomezClasses.MyDialogs;
+import com.bkj.search.GomezClasses.FileManager;
+import com.bkj.search.GomezClasses.Mapping;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;

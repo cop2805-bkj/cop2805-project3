@@ -1,6 +1,4 @@
-package com.bkj.search.utils;
-
-import java.io.File;
+package com.bkj.search.bradUtils;
 
 /**
  * Created by bclaus on 3/6/17.

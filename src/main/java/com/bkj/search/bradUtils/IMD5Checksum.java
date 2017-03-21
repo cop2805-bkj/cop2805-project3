@@ -1,4 +1,4 @@
-package com.bkj.search.utils;
+package com.bkj.search.bradUtils;
 
 import java.io.File;
 import java.io.FileInputStream;

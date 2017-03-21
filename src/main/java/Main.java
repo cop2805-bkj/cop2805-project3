@@ -1,4 +1,4 @@
-import com.bkj.search.gui.MainWindow;
+import com.bkj.search.bradGUI.MainWindow;
 
 import java.io.File;
 import java.io.FileReader;

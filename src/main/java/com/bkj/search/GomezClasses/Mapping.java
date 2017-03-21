@@ -7,7 +7,7 @@
  *
  * @author Kelvin
  */
-package GomezClasses;
+package com.bkj.search.GomezClasses;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;

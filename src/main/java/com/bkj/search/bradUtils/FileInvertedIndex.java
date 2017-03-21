@@ -1,9 +1,9 @@
-package com.bkj.search.utils;
+package com.bkj.search.bradUtils;
 
 import java.io.*;
 import java.util.*;
 
-import static com.bkj.search.utils.IMD5Checksum.getCheckSum;
+import static com.bkj.search.bradUtils.IMD5Checksum.getCheckSum;
 
 /**
  * @see InvertedIndexEntry

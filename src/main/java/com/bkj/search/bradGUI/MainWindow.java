@@ -1,6 +1,6 @@
-package com.bkj.search.gui;
+package com.bkj.search.bradGUI;
 
-import com.bkj.search.utils.*;
+import com.bkj.search.bradUtils.*;
 import com.google.gson.Gson;
 
 import javax.swing.*;
@@ -13,7 +13,6 @@ import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
-import java.util.function.Function;
 
 /**
  * @see Runnable

@@ -1,4 +1,4 @@
-package GUI;
+package com.bkj.search.JonsGUI;
 
 import java.io.File;
 import java.io.IOException;

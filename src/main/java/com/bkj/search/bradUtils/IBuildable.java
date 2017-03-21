@@ -1,6 +1,4 @@
-package com.bkj.search.utils;
-
-import com.google.gson.Gson;
+package com.bkj.search.bradUtils;
 
 import java.io.FileReader;
 

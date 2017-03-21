@@ -1,4 +1,4 @@
-package com.bkj.search.utils;
+package com.bkj.search.bradUtils;
 
 public class Pair<T, U> {
         public final T key;

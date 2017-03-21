@@ -1,4 +1,4 @@
-package com.bkj.search.utils;
+package com.bkj.search.bradUtils;
 
 /**
  * Created by bclaus on 3/8/17.

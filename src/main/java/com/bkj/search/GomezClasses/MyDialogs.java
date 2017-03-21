@@ -7,7 +7,7 @@
  *
  * @author Kelvin
  */
-package GomezClasses;
+package com.bkj.search.GomezClasses;
 import javax.swing.JOptionPane;
 import javax.swing.JFrame;
 /**

@@ -1,9 +1,5 @@
-package com.bkj.search.utils;
+package com.bkj.search.bradUtils;
 
-import com.bkj.search.utils.FileInvertedIndex;
-import com.bkj.search.utils.IFileInvertedIndex;
-
-import java.io.File;
 import java.util.*;
 
 /**
