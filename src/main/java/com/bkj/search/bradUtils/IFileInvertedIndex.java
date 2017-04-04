@@ -19,21 +19,6 @@ public interface IFileInvertedIndex {
     void
     rebuildIndex() throws IOException;
 
-    /**
-     * Searches file for the first occurrence(!) of searchString
-     * @param searchString string to search for
-     * @return true if found
-     */
-    boolean
-    containsTerm(String searchString);
-
-    /**
-     * Returns *all* occurrences of search string
-     * @param searchString
-     * @return
-     */
-    List<InvertedIndexEntry>
-    getOccurrences(String searchString);
 
     // TODO: Change MD5 checksuming for equals method -> will not work with MD5
     @Override

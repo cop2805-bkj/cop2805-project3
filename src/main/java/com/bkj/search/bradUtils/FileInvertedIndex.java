@@ -1,5 +1,8 @@
 package com.bkj.search.bradUtils;
 
+import com.bkj.search.bradSearch.SearchableFileIndex;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 import java.io.*;
 import java.util.*;
 
@@ -8,7 +11,7 @@ import static com.bkj.search.bradUtils.IMD5Checksum.getCheckSum;
 /**
  * @see InvertedIndexEntry
  */
-public class FileInvertedIndex implements IFileInvertedIndex {
+public class FileInvertedIndex implements IFileInvertedIndex, SearchableFileIndex {
 
     public List<Pair<String, InvertedIndexEntry>> invertedIndex;
     private File fileBacking;
@@ -69,42 +72,6 @@ public class FileInvertedIndex implements IFileInvertedIndex {
         }
     }
 
-    /**
-     * Searches file for the first occurrence(!) of searchString
-     * @param searchString string to search for
-     * @return true if found
-     */
-    @Override
-    public boolean
-    containsTerm(String searchString) {
-        boolean found = false;
-        for(Pair<String, InvertedIndexEntry> p : invertedIndex ) {
-            if(p.key == searchString) {
-                found = true;
-                break;
-            }
-        }
-        return found;
-    }
-
-    /**
-     * Returns *all* occurrences of search string
-     * @param searchString
-     * @return
-     */
-    @Override
-    public List<InvertedIndexEntry>
-    getOccurrences(String searchString) {
-        // linked list for fast inserts (at least for head inserts)
-        List<InvertedIndexEntry> matchingEntries = new LinkedList<>();
-
-        for(Pair<String, InvertedIndexEntry> p : invertedIndex) {
-            if(p.key == searchString) matchingEntries.add(p.value);
-        }
-        return matchingEntries;
-    }
-
-
     // TODO: Change MD5 checksuming for equals method -> will not work with MD5
     @Override
     public boolean equals(Object o) {
@@ -145,5 +112,37 @@ public class FileInvertedIndex implements IFileInvertedIndex {
     @Override
     public Date getLastModified() {
         return lastModified;
+    }
+
+    @Override
+    public boolean containsTerm(String term) {
+        boolean found = false;
+        for(Pair<String, InvertedIndexEntry> p : invertedIndex ) {
+            if(p.key == term) {
+                found = true;
+                break;
+            }
+        }
+        return found;
+    }
+
+    @Override
+    public IInvertedIndexEntry getFirstResult(String term, SEARCH_TYPE type) {
+        return null;
+    }
+
+    @Override
+    public List<IInvertedIndexEntry> getAllResults(String term, SEARCH_TYPE type) {
+        if (type == SEARCH_TYPE.AND || type == SEARCH_TYPE.PHRASE) {
+            //TODO: IMPLEMENT AND AND PHRASE SEARCHES
+            System.out.printf("getlAllResults() called with AND or PHRASE search -> ignoring!%n");
+        }
+            // linked list for fast inserts (at least for head inserts)
+            List<IInvertedIndexEntry> matchingEntries = new LinkedList<>();
+
+            for (Pair<String, InvertedIndexEntry> p : invertedIndex) {
+                if (p.key == term) matchingEntries.add(p.value);
+            }
+            return matchingEntries;
     }
 }
