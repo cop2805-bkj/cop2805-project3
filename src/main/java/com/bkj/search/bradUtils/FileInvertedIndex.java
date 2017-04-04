@@ -1,6 +1,7 @@
 package com.bkj.search.bradUtils;
 
 import com.bkj.search.bradSearch.SearchableFileIndex;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.*;
 import java.util.*;
@@ -132,13 +133,16 @@ public class FileInvertedIndex implements IFileInvertedIndex, SearchableFileInde
 
     @Override
     public List<IInvertedIndexEntry> getAllResults(String term, SEARCH_TYPE type) {
-        // linked list for fast inserts (at least for head inserts)
-        List<IInvertedIndexEntry> matchingEntries = new LinkedList<>();
-
-        for(Pair<String, InvertedIndexEntry> p : invertedIndex) {
-            if(p.key == term) matchingEntries.add(p.value);
+        if (type == SEARCH_TYPE.AND || type == SEARCH_TYPE.PHRASE) {
+            //TODO: IMPLEMENT AND AND PHRASE SEARCHES
+            System.out.printf("getlAllResults() called with AND or PHRASE search -> ignoring!%n");
         }
-        return matchingEntries;
+            // linked list for fast inserts (at least for head inserts)
+            List<IInvertedIndexEntry> matchingEntries = new LinkedList<>();
 
+            for (Pair<String, InvertedIndexEntry> p : invertedIndex) {
+                if (p.key == term) matchingEntries.add(p.value);
+            }
+            return matchingEntries;
     }
 }
