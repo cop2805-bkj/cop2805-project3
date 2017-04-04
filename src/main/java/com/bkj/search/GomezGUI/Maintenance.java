@@ -8,10 +8,8 @@
  * @author Kelvin
  */
 package com.bkj.search.GomezGUI;
-import com.bkj.search.GomezClasses.MyDialogs;
 import com.bkj.search.GomezClasses.FileManager;
 import com.bkj.search.GomezClasses.Mapping;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,8 +17,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 public class Maintenance extends javax.swing.JFrame {    
     private DefaultListModel list = new DefaultListModel();
+    private Mapping map = new Mapping();
     private FileManager fm;
-    private Mapping map;
     /**
      * Creates new form Maintenance
      */
@@ -43,7 +41,6 @@ public class Maintenance extends javax.swing.JFrame {
         }
         list_Files.setModel(list);
         // End
-        System.out.println(fm.list);
     }  
     /**
      * This method is called from within the constructor to initialize the form.
@@ -174,41 +171,51 @@ public class Maintenance extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_RebuildListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_RebuildListActionPerformed
-        new MyDialogs().showTempOut(); //*****Temporary Placeholder*****
+        try {
+            map.map(fm.list);
+        } catch (IOException ex) {
+            Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_button_RebuildListActionPerformed
     /**
      * Adds files to the file list. -Kelvin
      * @param evt 
      */
     private void button_AddFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_AddFileActionPerformed
-        fm.getPathStr();
-        int index = fm.list.size() -1;
-        list.addElement(fm.list.get(index));
-        try {
-            fm.writeToFile(fm.list.get(index));
-        } catch (IOException ex) {
-            Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
+        int result = fm.getPathStr();
+        if(result == 0){
+            int index = fm.list.size() -1;
+            list.addElement(fm.list.get(index));
+            try {
+                fm.writeToFile(fm.list.get(index));
+            } catch (IOException ex) {
+                Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            list_Files.setModel(list);
+        }else{
+            JOptionPane.showMessageDialog(null,"Operation canceled","Warning",
+                JOptionPane.PLAIN_MESSAGE);
         }
-        list_Files.setModel(list);
-        try{
-            map.add(fm.list);
-        }catch(FileNotFoundException e){
-            JOptionPane.showMessageDialog(null,"File not found.","Error",
-            JOptionPane.PLAIN_MESSAGE);}
     }//GEN-LAST:event_button_AddFileActionPerformed
     /**
      * Removes selected file from the file list. -Kelvin
      * @param evt 
      */
     private void button_RemoveFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_RemoveFileActionPerformed
-        int delete = list_Files.getSelectedIndex();
-        list.removeElementAt(delete);
-        fm.list.remove(delete);
+
         try {
-            new FileManager().clearFile();
-            int content = fm.list.size();
-            for(int i =0; i < content; i++){
-                fm.writeToFile(fm.list.get(i));
+            int delete = list_Files.getSelectedIndex();
+            if(list_Files.getSelectedIndex() >= 0){
+                list.removeElementAt(delete);
+                fm.list.remove(delete);
+                new FileManager().clearFile();
+                int content = fm.list.size();
+                for(int i =0; i < content; i++){
+                    fm.writeToFile(fm.list.get(i));
+                }
+            }else{
+                JOptionPane.showMessageDialog(null,"No file selected","Warning",
+                JOptionPane.PLAIN_MESSAGE);
             }
         } catch (IOException ex) {
             Logger.getLogger(Maintenance.class.getName()).log(Level.SEVERE, null, ex);
@@ -244,11 +251,8 @@ public class Maintenance extends javax.swing.JFrame {
         //</editor-fold>
         
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new Maintenance().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new Maintenance().setVisible(true);
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables

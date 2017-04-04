@@ -8,50 +8,41 @@
  * @author Kelvin
  */
 package com.bkj.search.GomezClasses;
-import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.TreeMap;
 /**
- *
+ * This Class has all the indexing tools
  * @author Kelvin
  */
-public class Mapping {
-    private int file;
+public class Mapping{
+    private final TreeMap<Integer, ArrayList<String>> map = new TreeMap<>();
     private Scanner reader;
-    private TreeMap<String, TreeMap<Integer,Integer>> tmap;
+    private String word;
     /**
-     * Populates the TreeMap from the passed in file list.
-     * @param fileList 
-     * @throws java.io.FileNotFoundException 
+     * Stores every word in each file into the TreeMap
+     * @param files
+     * @throws IOException 
      */
-    public void add(ArrayList fileList) throws FileNotFoundException{
-//        String[] files;
-//        files = (String[]) fileList.toArray();
-        String file;
-        for(int index = 0; index < fileList.size(); index++){
-            file = fileList.get(index).toString();
-            reader = new Scanner(new File(file));
-            Scanner in = new Scanner(reader.nextLine());
-            while(in.hasNext()){
-                String inputText = in.next();
-                String[] words = inputText.split("[ \n\t\r,.;:!?*--+(){}}]");
-                for(int i = 0; i < words.length; i++){
-                    String key = words[i].toLowerCase();                  
-                    if(words[i].length() > 1){
-                        if(tmap.get(key) == null){
-                            tmap.put(key, new TreeMap<>());
-                            tmap.get(key).put(index,1);
-                        }
-                        else{
-                            int value = tmap.get(key).get(file);
-                            value = value + 1;
-                            tmap.get(key).put(index, value);
-                        }
-                    }
+    public void map(ArrayList<String> files) throws IOException{
+        for(int i = 0; i < files.size(); i++){
+                ArrayList<String> list =  new ArrayList<>();
+                try{
+                    reader = new Scanner(new FileReader(files.get(i)));
+                }catch(FileNotFoundException e){
+                    System.err.println(e);
+                    return;
                 }
-            }
-        }
+                while(reader.hasNext()){
+                    word = reader.next();
+                    word = word.toLowerCase();
+                    word = word.replaceAll("[^a-zA-Z0-9\\s]", "");
+                    list.add(word);
+                }
+                map.put(i, list);
+        }        
     }
 }

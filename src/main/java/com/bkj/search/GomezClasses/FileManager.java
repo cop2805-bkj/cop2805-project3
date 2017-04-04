@@ -23,29 +23,32 @@ import javax.swing.*;
  */
 public class FileManager {
     public String pathname;
-    public ArrayList<String> list = new ArrayList<String>();
-    
+    public ArrayList<String> list = new ArrayList<>();
     /**
      * Allows for search and selection of file and
      * returns the pathname as a string. It also
      * appends the string to the ArrayList. 
+     * @return 
      */
-    public void getPathStr(){
+    public int getPathStr(){
         JFileChooser chooser = new JFileChooser();
         File file;
         String str;
-        
 	chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
         int results = chooser.showOpenDialog(chooser);
        	if(results == JFileChooser.APPROVE_OPTION){
             file = chooser.getSelectedFile();
             str = file.toPath().toString();
             pathname = str;
-        }else if(results == JFileChooser.CANCEL_OPTION){
-            JOptionPane.showMessageDialog(null,"Operation canceled.","Message",
-            JOptionPane.PLAIN_MESSAGE);
+            list.add(pathname);
+        }  
+        int opRes;
+        if(results == JFileChooser.APPROVE_OPTION){
+            opRes = 0;
+        }else{
+            opRes = 1;
         }
-        list.add(pathname);
+        return opRes;
     }
     /**
      * Writes the pathname of the selected file to the embedded text file ("InFile.txt").

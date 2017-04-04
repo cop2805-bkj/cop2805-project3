@@ -270,11 +270,8 @@ public class MainInterface extends javax.swing.JFrame {
          * Brings up the Main Interface when
          * the program runs. -Kelvin
          */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            @Override
-            public void run() {
-                new MainInterface().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new MainInterface().setVisible(true);
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
