@@ -60,7 +60,7 @@
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Component id="multiLineTextPane" alignment="1" max="32767" attributes="0"/>
                               <Group type="102" alignment="0" attributes="0">
-                                  <Component id="searchtextField" min="-2" pref="381" max="-2" attributes="0"/>
+                                  <Component id="searchTextField" min="-2" pref="381" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="searchButton" pref="87" max="32767" attributes="0"/>
                               </Group>
@@ -82,7 +82,7 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="searchLabel" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="searchtextField" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
+                      <Component id="searchTextField" alignment="3" min="-2" pref="22" max="-2" attributes="0"/>
                       <Component id="searchButton" alignment="3" min="-2" pref="24" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="-2" attributes="0"/>
@@ -120,7 +120,7 @@
             </Property>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="searchtextField">
+        <Component class="javax.swing.JTextField" name="searchTextField">
           <Properties>
             <Property name="text" type="java.lang.String" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
               <Connection code="&quot;&quot;" type="code"/>

@@ -27,7 +27,7 @@ public class Main_UI extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
         titleLabel = new javax.swing.JLabel();
         searchLabel = new javax.swing.JLabel();
-        searchtextField = new javax.swing.JTextField();
+        searchTextField = new javax.swing.JTextField();
         searchButton = new javax.swing.JButton();
         multiLineTextPane = new javax.swing.JScrollPane();
         multiLineTextField = new javax.swing.JTextArea();
@@ -45,7 +45,7 @@ public class Main_UI extends javax.swing.JFrame {
         searchLabel.setFont(new java.awt.Font("Times New Roman", 0, 20)); // NOI18N
         searchLabel.setText("Search:");
 
-        searchtextField.setText("");
+        searchTextField.setText("");
 
         searchButton.setText("Search");
         searchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -104,7 +104,7 @@ public class Main_UI extends javax.swing.JFrame {
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(multiLineTextPane, javax.swing.GroupLayout.Alignment.TRAILING)
                             .addGroup(mainPanelLayout.createSequentialGroup()
-                                .addComponent(searchtextField, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 381, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 87, Short.MAX_VALUE)))))
                 .addContainerGap())
@@ -119,7 +119,7 @@ public class Main_UI extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(searchLabel)
-                    .addComponent(searchtextField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(searchButton, javax.swing.GroupLayout.PREFERRED_SIZE, 24, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -164,7 +164,10 @@ public class Main_UI extends javax.swing.JFrame {
     }//GEN-LAST:event_fileButtonActionPerformed
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        JOptionPane.showMessageDialog(null, "Not implemented yet!!!");
+        String currentWord = searchTextField.getText();
+        Inverted_Index index = new Inverted_Index();
+        index.setWord(currentWord);
+        index.run();
     }//GEN-LAST:event_searchButtonActionPerformed
 
     public static void main(String args[]) {
@@ -203,7 +206,7 @@ public class Main_UI extends javax.swing.JFrame {
     private javax.swing.JButton searchButton;
     private javax.swing.JComboBox<String> searchComboBox;
     private javax.swing.JLabel searchLabel;
-    private javax.swing.JTextField searchtextField;
+    private javax.swing.JTextField searchTextField;
     private javax.swing.JLabel titleLabel;
     // End of variables declaration//GEN-END:variables
 }
