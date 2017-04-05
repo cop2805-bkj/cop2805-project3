@@ -19,7 +19,7 @@ import java.util.TreeMap;
  * @author Kelvin
  */
 public class Mapping{
-    private final TreeMap<Integer, ArrayList<String>> map = new TreeMap<>();
+    public final TreeMap<Integer, ArrayList<String>> map = new TreeMap<>();
     private Scanner reader;
     private String word;
     /**
