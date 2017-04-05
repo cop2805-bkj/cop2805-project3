@@ -2,15 +2,21 @@ package GUI;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
+import static java.nio.file.Files.list;
+import java.util.ArrayList;
+import static java.util.Collections.list;
 import java.util.Scanner;
 
 /**
  *
  * @author Jonathan Llaneras
  */
-public class Inverted_Index implements Runnable {
+public class Inverted_Index {
     
     private String searchWord;
+    private ArrayList<String> list = new ArrayList<>();
+    private Scanner reader;
     
     public String getWord() {
         return searchWord;       
@@ -19,90 +25,36 @@ public class Inverted_Index implements Runnable {
     public void setWord(String word) {
         searchWord = word;
     }
-    
-    /**
-     *
-     */
-    @Override
-    public void run() {
+
+    public void run() throws FileNotFoundException {
         File file =new File("list.txt");
         Scanner in = null;
-        try {
-            in = new Scanner(file);
+            in = new Scanner(new FileReader(file));
             while(in.hasNext())
             {
                 String line=in.nextLine();
                 if(line.contains(""))
                     System.out.println("1");
-                File fileText;
-                fileText = new File(line);
-                Scanner readText = null;
-                try {
-                    readText = new Scanner(file);
-                    while(in.hasNext())
-                    {
-                        String lineText=in.nextLine();
-                        lineText = lineText.toLowerCase();
-                        System.out.println("2");
-                        while(lineText.contains(searchWord))
-                            System.out.println(searchWord);
-                    }
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                }
+                try{
+                    reader = new Scanner(new FileReader(line));
+                }catch(FileNotFoundException e){
+                    System.err.println(e);
+                    return;
             }
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+            while(reader.hasNext()){
+                    searchWord = reader.next();
+                    searchWord = searchWord.toLowerCase();
+                    searchWord = searchWord.replaceAll("[^a-zA-Z0-9\\s]", "");
+                    list.add(searchWord);
+            }
+            
         }
-    
     }
-        /*File file =new File("line.txt");
-        Scanner in = null;
-        try {
-            in = new Scanner(file);
-            while(in.hasNext())
-            {
-                String line=in.nextLine();
-                if(line.contains(""))
-                    System.out.println(line);
-            }
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-
-        }
-    }*/
-
     /**
      *
+     * @param searchWord
      */
-    public void getfiles() {
-        File file =new File("list.txt");
-        Scanner in = null;
-        try {
-            in = new Scanner(file);
-            while(in.hasNext())
-            {
-                String line=in.nextLine();
-                if(line.contains(""))
-                    System.out.println(line);
-                File fileText;
-                fileText = new File(line);
-                Scanner readText = null;
-                try {
-                    readText = new Scanner(file);
-                    while(in.hasNext())
-                    {
-                        String lineText=in.nextLine();
-                        System.out.println(lineText);
-                        while(lineText.contains(searchWord))
-                            System.out.println(searchWord);
-                    }
-                } catch (FileNotFoundException e) {
-                    // TODO Auto-generated catch block
-                }
-            }
-        } catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
-        }
+    public void searchMap(String searchWord){
+    	System.out.println(list.contains(searchWord));
     }
 }

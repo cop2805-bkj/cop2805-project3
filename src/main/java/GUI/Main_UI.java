@@ -1,5 +1,9 @@
 package GUI;
 
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 /**
@@ -8,6 +12,7 @@ import javax.swing.JOptionPane;
  */
 public class Main_UI extends javax.swing.JFrame {
 
+    private DefaultListModel model = new DefaultListModel();
     /**
      * Creates new form Main_UI
      */
@@ -167,7 +172,12 @@ public class Main_UI extends javax.swing.JFrame {
         String currentWord = searchTextField.getText();
         Inverted_Index index = new Inverted_Index();
         index.setWord(currentWord);
-        index.run();
+        try {
+            index.run();
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Main_UI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        index.searchMap(currentWord);
     }//GEN-LAST:event_searchButtonActionPerformed
 
     public static void main(String args[]) {
