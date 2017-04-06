@@ -17,19 +17,20 @@ import java.util.TreeMap;
  * @author Kelvin
  */
 public class IndexSearchTools {
-    private final ArrayList<Integer> intList = new ArrayList<>();    
+    private final ArrayList<Integer> results = new ArrayList<>();
     /**
      * Returns ArrayList of integers. These values represent the index location
      * of the words within the TreeMap that has the files indexed.
      * @param index
      * @param arg
-     * @param key
      * @return 
      */
-    public int searchOR(TreeMap<Integer, ArrayList<String>> index, String arg, int key){
-        int results = 0;
-        if(index.get(key).contains(arg)){
-            results = key;
+    public ArrayList searchOR(TreeMap<Integer, ArrayList<String>> index, String arg){
+        results.removeAll(results);
+        for(int key = 0; key < index.size(); key++){
+            if(index.get(key).contains(arg)){
+                results.add(key);
+            }
         }
         return results;
     }

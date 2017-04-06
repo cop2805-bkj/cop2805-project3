@@ -1,4 +1,7 @@
 import com.bkj.search.GomezGUI.MainInterface;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 //import com.bkj.search.bradGUI.MainWindow;
 //
 //import java.io.File;
@@ -9,7 +12,11 @@ import com.bkj.search.GomezGUI.MainInterface;
 public class Main {
     public static void main(String[] args){
                 java.awt.EventQueue.invokeLater(() -> {
-                    new MainInterface().setVisible(true);
+                    try {
+                        new MainInterface().setVisible(true);
+                    } catch (IOException ex) {
+                        Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 });
         
 //        File f = new File("settings.json");

@@ -8,6 +8,7 @@ import com.bkj.search.GomezClasses.FileManager;
 import com.bkj.search.GomezClasses.IndexSearchTools;
 import com.bkj.search.GomezClasses.Mapping;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DefaultListModel;
@@ -333,14 +334,34 @@ public class MainInterface extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SearchActionPerformed
-        DefaultListModel model = new DefaultListModel();
-        String str = textField_SearchBar.toString().toLowerCase();
-        for(int i = 0; i < map.map.size(); i++){
-            int location = search.searchOR(map.map, str, i);
-            model.addElement(fm.list.get(location));
+        DefaultListModel model;
+        if(textField_SearchBar.getText().length() > 0){
+            String str = textField_SearchBar.getText().toLowerCase();
+            ArrayList<Integer> results = search.searchOR(map.map, str);
+            if(results.size() > 0){
+                model = new DefaultListModel();
+                for(int i = 0; i < results.size(); i++){
+                    model.addElement(fm.list.get(results.get(i)));
+                }
+                searchResults.setModel(model); 
+            }else{
+                empty();
+                JOptionPane.showMessageDialog(null, "No matching results",
+                        "Sorry", JOptionPane.PLAIN_MESSAGE);
+            }
+        }else{
+            empty();
         }
-        searchResults.setModel(model);
     }//GEN-LAST:event_button_SearchActionPerformed
+    /**
+     * Clears the JList model and removes entries.
+     */
+    public void empty(){
+        searchResults.removeAll();
+        DefaultListModel model = new DefaultListModel();
+        model.removeAllElements();
+        searchResults.setModel(model);        
+    }
     /**
      * Adds file to index
      * @param evt 
