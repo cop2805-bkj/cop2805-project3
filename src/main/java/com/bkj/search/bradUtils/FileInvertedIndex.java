@@ -118,7 +118,7 @@ public class FileInvertedIndex implements IFileInvertedIndex, SearchableFileInde
     public boolean containsTerm(String term) {
         boolean found = false;
         for(Pair<String, InvertedIndexEntry> p : invertedIndex ) {
-            if(p.key == term) {
+            if(Objects.equals(p.key, term)) {
                 found = true;
                 break;
             }
@@ -141,7 +141,7 @@ public class FileInvertedIndex implements IFileInvertedIndex, SearchableFileInde
             List<IInvertedIndexEntry> matchingEntries = new LinkedList<>();
 
             for (Pair<String, InvertedIndexEntry> p : invertedIndex) {
-                if (p.key == term) matchingEntries.add(p.value);
+                if (Objects.equals(p.key, term)) matchingEntries.add(p.value);
             }
             return matchingEntries;
     }
