@@ -334,14 +334,18 @@ public class MainInterface extends javax.swing.JFrame {
      * @param evt 
      */
     private void button_SearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_button_SearchActionPerformed
+        empty();
         DefaultListModel model;
+
         if(textField_SearchBar.getText().length() > 0){
-            String str = textField_SearchBar.getText().toLowerCase();
+            String[] str = textField_SearchBar.getText().toLowerCase().split("[ \n\t\r,.;:!?*--+(){}}]");
             ArrayList<Integer> results = search.searchOR(map.map, str);
             if(results.size() > 0){
                 model = new DefaultListModel();
                 for(int i = 0; i < results.size(); i++){
-                    model.addElement(fm.list.get(results.get(i)));
+                    if((model.contains(fm.list.get(results.get(i)))) == false){
+                        model.addElement(fm.list.get(results.get(i)));                                            
+                    }
                 }
                 searchResults.setModel(model); 
             }else{
