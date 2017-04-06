@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.bkj.search.gui.MainWindow">
-  <grid id="27dc6" binding="mainPane" layout-manager="BorderLayout" hgap="0" vgap="0">
+<form xmlns="http://www.intellij.com/uidesigner/form/" version="1" bind-to-class="com.bkj.search.bradGUI.MainWindow">
+  <grid id="27dc6" binding="topPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
     <constraints>
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties/>
     <border type="none"/>
     <children>
-      <grid id="882f6" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
+      <grid id="882f6" binding="searchPanel" layout-manager="FlowLayout" hgap="5" vgap="5" flow-align="1">
         <constraints border-constraint="North"/>
         <properties/>
         <border type="line"/>
@@ -28,25 +28,25 @@
               <caretAspectRatio class="java.lang.Float" value="0.04"/>
             </clientProperties>
           </component>
-          <component id="e158b" class="javax.swing.JButton" binding="doSearchButton">
+          <component id="e158b" class="javax.swing.JButton" binding="searchButton">
             <constraints/>
             <properties>
               <text value="Go"/>
             </properties>
           </component>
-          <component id="a98f8" class="javax.swing.JComboBox" binding="comboBox1" default-binding="true">
+          <component id="a98f8" class="javax.swing.JComboBox" binding="searchComboBox">
             <constraints/>
             <properties>
               <model>
-                <item value="AND"/>
                 <item value="OR"/>
+                <item value="AND"/>
                 <item value="PHRASE"/>
               </model>
             </properties>
           </component>
         </children>
       </grid>
-      <grid id="41d08" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="41d08" binding="mainPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="Center"/>
         <properties/>
         <border type="none"/>
@@ -56,7 +56,7 @@
             <properties/>
             <border type="none"/>
             <children>
-              <grid id="55fda" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="55fda" binding="resultsPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
                   <tabbedpane title="Search Results"/>
                 </constraints>
@@ -79,9 +79,9 @@
                   </scrollpane>
                 </children>
               </grid>
-              <grid id="2f5ba" layout-manager="BorderLayout" hgap="0" vgap="0">
+              <grid id="2f5ba" binding="filesListPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
                 <constraints>
-                  <tabbedpane title="Files"/>
+                  <tabbedpane title="Indexed Files"/>
                 </constraints>
                 <properties/>
                 <border type="none"/>
@@ -97,12 +97,14 @@
                           <text value="Choose Files..."/>
                         </properties>
                       </component>
+                      <component id="a3c88" class="javax.swing.JButton" binding="importListButton">
+                        <constraints border-constraint="East"/>
+                        <properties>
+                          <text value="Import..."/>
+                        </properties>
+                      </component>
                     </children>
                   </grid>
-                  <component id="f1bc5" class="javax.swing.JList" binding="searchFilesList" custom-create="true">
-                    <constraints border-constraint="Center"/>
-                    <properties/>
-                  </component>
                   <component id="a149e" class="javax.swing.JButton" binding="removeSelectedFileButton" default-binding="true">
                     <constraints border-constraint="South"/>
                     <properties>
@@ -110,9 +112,20 @@
                       <text value="Remove Selected File"/>
                     </properties>
                   </component>
+                  <scrollpane id="e7889">
+                    <constraints border-constraint="Center"/>
+                    <properties/>
+                    <border type="none"/>
+                    <children>
+                      <component id="c8e6" class="javax.swing.JTable" binding="openFilesTable" custom-create="true">
+                        <constraints/>
+                        <properties/>
+                      </component>
+                    </children>
+                  </scrollpane>
                 </children>
               </grid>
-              <grid id="af41a" layout-manager="GridBagLayout">
+              <grid id="af41a" binding="settingsPagePanel" layout-manager="GridBagLayout">
                 <constraints>
                   <tabbedpane title="Settings"/>
                 </constraints>
@@ -139,13 +152,13 @@
                   </component>
                   <vspacer id="1648d">
                     <constraints>
-                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
+                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="6" hsize-policy="1" anchor="0" fill="2" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                   </vspacer>
                   <component id="bb758" class="javax.swing.JButton" binding="aboutButton" default-binding="true">
                     <constraints>
-                      <grid row="4" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
+                      <grid row="5" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
@@ -170,13 +183,22 @@
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                   </vspacer>
-                  <component id="5f27d" class="javax.swing.JCheckBox" binding="saveDatabaseCheckbox">
+                  <component id="5f27d" class="javax.swing.JCheckBox" binding="useDatabaseCheckbox">
+                    <constraints>
+                      <grid row="3" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <gridbag weightx="0.0" weighty="0.0"/>
+                    </constraints>
+                    <properties>
+                      <text value="Use database for indexes"/>
+                    </properties>
+                  </component>
+                  <component id="e566a" class="javax.swing.JCheckBox" binding="saveSettingsOnExitCheckBox" default-binding="true">
                     <constraints>
                       <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
                       <gridbag weightx="0.0" weighty="0.0"/>
                     </constraints>
                     <properties>
-                      <text value="Save database to disk"/>
+                      <text value="Save settings on exit"/>
                     </properties>
                   </component>
                 </children>
@@ -185,7 +207,7 @@
           </tabbedpane>
         </children>
       </grid>
-      <grid id="bcb38" layout-manager="BorderLayout" hgap="0" vgap="0">
+      <grid id="bcb38" binding="toolbarPanel" layout-manager="BorderLayout" hgap="0" vgap="0">
         <constraints border-constraint="South"/>
         <properties/>
         <border type="none"/>

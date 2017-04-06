@@ -1,64 +1,76 @@
-package com.bkj.search.gui;
+package com.bkj.search.bradGUI;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class NotImplementedDialog extends JDialog {
+
+/**
+ * @see java.lang.Runnable
+ * @since 0.1
+ */
+public class AboutDialog extends JDialog
+        implements Runnable {
+
     private JPanel contentPane;
     private JButton buttonOK;
     private JButton buttonCancel;
-    private JLabel dialogMessage;
 
-
-    public NotImplementedDialog() {
-        new NotImplementedDialog("UNKNOWN", "NO MESSAGE");
-    }
-
-    public NotImplementedDialog(String title, String message) {
+    /**
+     * Sets up and creates the About Dialog
+     * <p>
+     * You still need to run the AboutDialog::run method to display the window
+     * preferably with SwingUtilities.InvokeLater(new AboutDialog());
+     * </p>
+     */
+    public AboutDialog() {
         setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
 
-        buttonOK.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onOK();
-            }
-        });
+        buttonOK.addActionListener((ActionEvent e) -> onOK());
 
-        buttonCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        });
+        buttonCancel.addActionListener((ActionEvent e) -> onCancel());
 
-        // call onCancel() when cross is clicked
+        // call onCancel() when cross is clicked instead of disposing the window
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+        // This cannot be converted to a lambda because WindowAdapter is not a functional interface
         addWindowListener(new WindowAdapter() {
+            @Override
             public void windowClosing(WindowEvent e) {
                 onCancel();
             }
         });
 
         // call onCancel() on ESCAPE
-        contentPane.registerKeyboardAction(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                onCancel();
-            }
-        }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+        contentPane.registerKeyboardAction(e -> onCancel(),
+                KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+                JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    }
 
-        setTitle(title);
-        dialogMessage.setText(message);
 
+    /**
+     * calls JDialog::pack and sets the dialog visible
+     * @see java.lang.Runnable
+     */
+    @Override
+    public void run() {
         pack();
         setVisible(true);
     }
 
+
+    /**
+     * Handles on exit tasks when 'Ok' is pressed
+     */
     private void onOK() {
         // add your code here
         dispose();
     }
 
+    /**
+     * Handles on exit tasks when 'Cancel' is pressed or exiting
+     */
     private void onCancel() {
         // add your code here if necessary
         dispose();
@@ -81,23 +93,26 @@ public class NotImplementedDialog extends JDialog {
     private void $$$setupUI$$$() {
         contentPane = new JPanel();
         contentPane.setLayout(new BorderLayout(0, 0));
+        contentPane.setPreferredSize(new Dimension(300, 200));
         final JPanel panel1 = new JPanel();
         panel1.setLayout(new BorderLayout(0, 0));
         contentPane.add(panel1, BorderLayout.CENTER);
-        dialogMessage = new JLabel();
-        dialogMessage.setText("No Message");
-        panel1.add(dialogMessage, BorderLayout.CENTER);
+        final JLabel label1 = new JLabel();
+        label1.setText("Label");
+        panel1.add(label1, BorderLayout.CENTER);
         final JPanel panel2 = new JPanel();
-        panel2.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+        panel2.setLayout(new BorderLayout(0, 0));
         contentPane.add(panel2, BorderLayout.SOUTH);
         final JPanel panel3 = new JPanel();
         panel3.setLayout(new BorderLayout(0, 0));
-        panel2.add(panel3);
+        panel2.add(panel3, BorderLayout.CENTER);
         buttonOK = new JButton();
+        buttonOK.setPreferredSize(new Dimension(100, 30));
         buttonOK.setText("OK");
         panel3.add(buttonOK, BorderLayout.WEST);
         buttonCancel = new JButton();
-        buttonCancel.setText("Cancel");
+        buttonCancel.setPreferredSize(new Dimension(35, 30));
+        buttonCancel.setText("Close");
         panel3.add(buttonCancel, BorderLayout.CENTER);
     }
 
