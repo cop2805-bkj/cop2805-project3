@@ -38,8 +38,8 @@
             <constraints/>
             <properties>
               <model>
-                <item value="AND"/>
                 <item value="OR"/>
+                <item value="AND"/>
                 <item value="PHRASE"/>
               </model>
             </properties>

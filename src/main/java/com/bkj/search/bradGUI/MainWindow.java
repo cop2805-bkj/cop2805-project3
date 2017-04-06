@@ -1,5 +1,6 @@
 package com.bkj.search.bradGUI;
 
+import com.bkj.search.bradSearch.SearchableFileIndex;
 import com.bkj.search.bradUtils.*;
 import com.google.gson.Gson;
 
@@ -9,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.text.Format;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -90,7 +92,57 @@ public class MainWindow implements Runnable, Saveable, Loadable<MainWindow.MainW
         });
 
         searchButton.addActionListener(actionEvent -> {
-            //TODO: implement searching
+            String[] searchTerms = searchTextField
+                    .getText()                      // Get text from field
+                    .toLowerCase()                  // TODO: make code more robust for upper and lower case
+                    .replaceAll("[^a-z0-9 ]", "")   // remove all non-alpha-numerics
+                    .split(" ");             // split into strings separated by a space i.e {"The", "Quick", "Red", ...}
+
+            String selectedSearchType = (String) searchComboBox.getSelectedItem();
+            SearchableFileIndex.SEARCH_TYPE searchType = SearchableFileIndex.SEARCH_TYPE.OR; // default to OR search
+
+            switch (selectedSearchType) {
+                case "OR":
+                    searchType = SearchableFileIndex.SEARCH_TYPE.OR;
+                    break;
+                case "AND":
+                    searchType = SearchableFileIndex.SEARCH_TYPE.AND;
+                    break;
+                case "PHRASE":
+                    searchType = SearchableFileIndex.SEARCH_TYPE.PHRASE;
+                    break;
+                default:
+                    // This should be impossible because the values in the combobox are set at compile time
+                    break;
+            }
+
+            System.out.printf("Performing %s search on \"%s\" %n", selectedSearchType, String.join(" ", searchTerms));
+
+            //TODO: move search logic out of the thread the UI is running on
+            // for a "proof of concept" the search logic is contained here
+            if (dm.getIndexedFiles().size() <= 0 || dm.getOpenFiles().size() <= 0 || searchTerms.length <= 0) {
+                System.out.printf("No indexed files OR no open files OR no search terms given%n");
+            } else {
+                List<IInvertedIndexEntry> resultList = new ArrayList<>();
+
+                // for each indexed file
+                for (FileInvertedIndex fii : dm.getIndexedFiles()) {
+                    // for each supplied search term
+                    for (String term : searchTerms) {
+                        // if the file contains AT LEAST one of the term we want
+                        if (fii.containsTerm(term)) {
+                            resultList.addAll(fii.getAllResults(term, searchType));
+                        } else {
+                            System.out.printf("File %s does not contain term...skipping%n", fii.getFileName());
+                        }
+                    }
+                }
+                // TODO: Put this in the results table
+                System.out.printf("Found %d results for search term %s %n", resultList.size(), String.join(" ", searchTerms));
+                for (IInvertedIndexEntry result : resultList) {
+                    System.out.printf("DocID: %d \t\t LineNumber: %d %n", result.getDocID(), result.getLineNumber());
+                }
+            }
         });
 
         selectDBButton.addActionListener(actionEvent -> {
@@ -160,7 +212,6 @@ public class MainWindow implements Runnable, Saveable, Loadable<MainWindow.MainW
         });
 
         // The last thing we do is set the content panel and some frame specifics
-        // TODO: should we check the return value of $$$getRootComponent$$$() for NULL?
         mainFrame.setContentPane($$$getRootComponent$$$());
         mainFrame.setPreferredSize(windowDimensions);
         try {
@@ -292,8 +343,8 @@ public class MainWindow implements Runnable, Saveable, Loadable<MainWindow.MainW
         searchPanel.add(searchButton);
         searchComboBox = new JComboBox();
         final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
-        defaultComboBoxModel1.addElement("AND");
         defaultComboBoxModel1.addElement("OR");
+        defaultComboBoxModel1.addElement("AND");
         defaultComboBoxModel1.addElement("PHRASE");
         searchComboBox.setModel(defaultComboBoxModel1);
         searchPanel.add(searchComboBox);
